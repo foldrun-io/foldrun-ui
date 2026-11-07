@@ -1,0 +1,24 @@
+---
+// Vendors in a tidy grid of equal cells divided by hairlines: each its own
+// mark (BrandMark, currentColor) and its name, muted until hovered. A
+// vendor without a mark in the kit shows its name alone in the same cell.
+// With href a cell is a link.
+import BrandMark from "./BrandMark.astro";
+export interface Vendor { name: string; href?: string }
+interface Props { items: Vendor[]; columns?: 2 | 3 | 4 | 6; label?: string; class?: string }
+const { items, columns = 4, label, class: cls = "" } = Astro.props;
+const cols = { 2: "grid-cols-2", 3: "grid-cols-2 sm:grid-cols-3", 4: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4", 6: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" }[columns];
+---
+<ul aria-label={label} class:list={["grid border-s border-t bg-surface", cols, cls]}>
+  {items.map((v) => {
+    const Tag = v.href ? "a" : "div";
+    return (
+      <li class="min-w-0 border-e border-b">
+        <Tag href={v.href} class:list={["flex h-14 items-center gap-2.5 px-4 text-sm text-fg-muted transition-colors hover:text-fg", v.href && "hover:bg-sunken"]}>
+          <BrandMark name={v.name} class="size-[18px] shrink-0" />
+          <span class="truncate">{v.name}</span>
+        </Tag>
+      </li>
+    );
+  })}
+</ul>

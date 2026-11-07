@@ -1,6 +1,6 @@
 {
   "name": "@foldrun/ui",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "foldrun's web components and design tokens: the one look shared by foldrun.io and docs.foldrun.io. Astro components and CSS as source.",
   "type": "module",
   "license": "FSL-1.1-ALv2",

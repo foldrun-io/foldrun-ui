@@ -13,7 +13,7 @@ the `.astro` files and compiles them with its own Astro and Tailwind.
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.2.0" }
+"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.2.1" }
 ```
 
 ```astro
@@ -67,8 +67,9 @@ colour, size and radius is a token in `src/styles/global.css`.
 | | |
 |---|---|
 | `src/layouts/BaseLayout.astro` | head, meta, schema.org, theme before first paint, fonts, header and footer slots |
-| `src/components/` | Header, Footer, ThemeSwitch, Hero, Section, SectionTitle, Button, ButtonRow, Card, FeatureGrid, Split, MediaPanel, Panel, TracePanel, CodePanel, Steps, StepNumber, StatGrid, PricingCards, PlanCard, ComparisonTable, Faq, Disclosure, Timeline, Callout, Badge, Chip, Check, Icon, IconTile, Logo, Monogram, Prose, ProductTour, ScreenshotFrame, CtaBand; for forms: Field (a labelled text field), ChoiceTiles (one choice from a few, our own pressed buttons), DataList (name and value rows), and Button without `href` (a real `<button>`) |
+| `src/components/` | Header, Footer, ThemeSwitch, Hero, Section, SectionTitle, Button, ButtonRow, Card, FeatureGrid, Split, MediaPanel, Panel, TracePanel, CodePanel, Steps, StepNumber, StatGrid, PricingCards, PlanCard, ComparisonTable, Faq, Disclosure, Timeline, Callout, Badge, Chip, Check, Icon, IconTile, Logo, BrandMark, LogoWall, Prose, ProductTour, ScreenshotFrame, CtaBand (Monogram is deprecated: initials read as placeholders); for forms: Field (a labelled text field), ChoiceTiles (one choice from a few, our own pressed buttons), DataList (name and value rows), and Button without `href` (a real `<button>`) |
 | `src/lib/icons.ts` | the Lucide icons the components draw, by name |
+| `src/lib/brands.ts` | vendors' own single-colour marks (Simple Icons, CC0) for BrandMark, LogoWall and Card `mark`; a vendor without one is shown by name |
 | `src/lib/boot.js` | the first-paint script (`html.js`, the saved theme), for `strictCsp` |
 | `src/lib/signup-client.ts` | one request per page to the app's `GET /api/signup`: sign-up switches for buttons marked `signup`, and live plans for `PricingCards` / `ComparisonTable` |
 | `src/styles/global.css` | the tokens (the dashboard's names and values), base, prose, backdrops |

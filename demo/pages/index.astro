@@ -29,6 +29,7 @@ import Disclosure from "../../src/components/Disclosure.astro";
 import Icon from "../../src/components/Icon.astro";
 import ScreenshotFrame from "../../src/components/ScreenshotFrame.astro";
 import Monogram from "../../src/components/Monogram.astro";
+import LogoWall from "../../src/components/LogoWall.astro";
 
 const signup = "https://app.example.invalid/signup";
 ---
@@ -55,6 +56,7 @@ const signup = "https://app.example.invalid/signup";
       <Fragment slot="actions"><Button href="/" variant="outline">More</Button></Fragment>
       <MediaPanel><TracePanel title="run" lines={[{ text: "ok", hi: true }, { text: "dim", dim: true }]} large /></MediaPanel>
     </Split>
+    <LogoWall items={[{ name: "Anthropic" }, { name: "OpenAI" }, { name: "Google Gemini", href: "/" }, { name: "Mistral" }]} />
     <CodePanel tabs={[{ id: "a", label: "a.md", code: "name: x  # comment" }, { id: "b", label: "b.md", code: "b" }]} caption="Caption" />
     <StatGrid items={[{ icon: "cpu", value: 3, label: "Things" }, { value: "4", label: "More" }]} />
     <PricingCards plans={[{ name: "Local", price: "", pitch: "Free", cta: { href: "/", label: "Install" } }, { name: "Paid", price: "$1", unit: "a month", bullets: ["a"], cta: { href: signup, label: "Start", signup: "plan:pro" }, highlight: true }]} columns={2} />

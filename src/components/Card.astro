@@ -1,17 +1,19 @@
 ---
-// A card: a tile (an icon or a vendor's monogram), a title, a line under
-// it, an optional meta line, and anything else in the slot. With href the
+// A card: a tile (an icon, or a vendor's own mark when the kit has one), a
+// title, a line under it, an optional meta line, and anything else in the
+// slot. A vendor without a mark is its name alone: no made-up initials. With href the
 // whole card is a link with an arrow. dashed is the "add your own" card.
 // Every card on the site is this component.
 import Icon from "./Icon.astro";
 import IconTile from "./IconTile.astro";
-import Monogram from "./Monogram.astro";
+import BrandMark from "./BrandMark.astro";
+import { brandFor } from "../lib/brands.ts";
 interface Props {
   title: string;
   body?: string;
   href?: string;
   icon?: string;
-  mark?: string;      // a vendor's name: drawn as a monogram tile
+  mark?: string;      // a vendor's name: its mark in a tile when the kit has one
   meta?: string;      // a small line above the title (a date) or under it (a key)
   metaAbove?: boolean;
   dashed?: boolean;
@@ -22,6 +24,7 @@ interface Props {
 const { title, body, href, icon, mark, meta, metaAbove = false, dashed = false, level = "h3", size = "md", class: cls = "" } = Astro.props;
 const H = level;
 const Tag = href ? "a" : "div";
+const hasMark = mark ? !!brandFor(mark) : false;
 const ext = href ? /^(https?:|mailto:)/.test(href) : false;
 ---
 <Tag
@@ -42,7 +45,7 @@ const ext = href ? /^(https?:|mailto:)/.test(href) : false;
   )}
   {mark ? (
     <div class="flex items-center gap-3">
-      <Monogram name={mark} />
+      {hasMark && <span aria-hidden="true" class="grid size-10 shrink-0 place-items-center rounded-lg border bg-surface text-fg"><BrandMark name={mark!} class="size-[18px]" /></span>}
       <div class="min-w-0">
         <H class="truncate text-sm font-medium">{title}</H>
         {meta && <code class="font-mono text-xs text-fg-muted">{meta}</code>}

@@ -46,7 +46,7 @@ const menuLinks = menu ? menu.columns.flatMap((c) => c.links) : [];
   <div aria-hidden="true" class="header-bg absolute inset-0 -z-10 bg-paper/80 backdrop-blur-md"></div>
   <a href="#main" class="sr-only rounded-md bg-surface px-3 py-1 focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50">{L.skip}</a>
   <div class:list={[width === "wide" ? "container-wide" : "container-site", " flex h-16 items-center gap-6"]}>
-    <a href={home} class="shrink-0 rounded-md" aria-label={L.home}><Logo suffix={suffix} /></a>
+    <a href={home} class="flex shrink-0 items-center rounded-md" aria-label={L.home}><Logo suffix={suffix} /></a>
 
     <nav aria-label={L.nav} class="hidden flex-1 items-center gap-1 lg:flex">
       {menu && <div class="menu" data-menu>

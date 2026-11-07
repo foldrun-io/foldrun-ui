@@ -1,0 +1,10 @@
+---
+// A vendor's own mark, single colour (currentColor), from src/lib/brands.ts
+// (Simple Icons, CC0). Renders nothing when the kit has no mark for the
+// name: a vendor is then shown by its name alone, never by made-up initials.
+import { brandFor } from "../lib/brands.ts";
+interface Props { name: string; class?: string }
+const { name, class: cls = "size-5" } = Astro.props;
+const brand = brandFor(name);
+---
+{brand && <svg class={cls} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d={brand.path} /></svg>}

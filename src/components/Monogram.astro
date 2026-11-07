@@ -1,6 +1,8 @@
 ---
-// A vendor's tile: a letter or two of its name, never its logo — no
-// third-party marks to license or fetch, and every tile the same weight.
+/** @deprecated since 0.2.1: initials read as placeholders (owner, 7 Nov 2026).
+ * Use BrandMark (the vendor's own mark, or nothing) or LogoWall. Kept so a
+ * site on an older call still builds; nothing in the kit uses it. */
+// A vendor's tile: a letter or two of its name.
 interface Props { name: string; size?: "sm" | "md" }
 const { name, size = "md" } = Astro.props;
 const words = name.replace(/\(.*?\)/g, "").replace(/[^A-Za-z0-9 ]/g, "").split(/\s+/).filter(Boolean);

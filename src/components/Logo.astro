@@ -1,6 +1,8 @@
 ---
-// The foldrun mark: a folder with the green run dot at its corner, and the
-// name beside it. The dot's ring is the page colour so it reads as cut out.
+// The foldrun mark: a folder with the run light at its corner, and the name
+// beside it. The light is the outline's own colour (currentColor: black in
+// light, white in dark; owner, 7 Nov 2026); its ring is the page colour so
+// it reads as cut out and never touches the outline.
 interface Props { class?: string; mark?: boolean; suffix?: string }
 const { class: cls = "", mark = false, suffix } = Astro.props;
 ---
@@ -9,7 +11,7 @@ const { class: cls = "", mark = false, suffix } = Astro.props;
     <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
     <path d="M3 11h18" />
     <circle cx="20.6" cy="19.4" r="3.1" fill="var(--paper)" stroke="none" />
-    <circle cx="20.6" cy="19.4" r="1.9" fill="var(--brand-green)" stroke="none" />
+    <circle cx="20.6" cy="19.4" r="1.9" fill="currentColor" stroke="none" />
   </svg>
   {!mark && <span class="text-[1.0625rem] leading-none">foldrun{suffix && <span class="ms-1.5 font-normal text-fg-muted">{suffix}</span>}</span>}
 </span>

@@ -1,7 +1,9 @@
 ---
 // A step's number in a small circle: the loop on the home page, the steps
-// of a use case's flow.
-interface Props { n: number; class?: string }
-const { n, class: cls = "" } = Astro.props;
+// of a use case's flow. A number is printed in the page's digits when
+// locale is given ("fa" → ۱); a string is printed as it is.
+interface Props { n: number | string; locale?: string; class?: string }
+const { n, locale, class: cls = "" } = Astro.props;
+const label = typeof n === "number" && locale ? new Intl.NumberFormat(locale).format(n) : n;
 ---
-<span aria-hidden="true" class:list={["grid size-8 shrink-0 place-items-center rounded-full border bg-surface text-xs font-semibold tabular-nums", cls]}>{n}</span>
+<span aria-hidden="true" class:list={["grid size-8 shrink-0 place-items-center rounded-full border bg-surface text-xs font-semibold tabular-nums", cls]}>{label}</span>

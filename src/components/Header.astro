@@ -31,8 +31,12 @@ interface Props {
   actions: HeaderAction[];
   /** "wide" lines the header up with a wide page (the docs). */
   width?: "site" | "wide";
+  /** The header's own words, for a page in another language. */
+  labels?: Partial<HeaderLabels>;
 }
-const { home = "/", suffix, menu, nav, actions, width = "site" } = Astro.props;
+export interface HeaderLabels { skip: string; home: string; nav: string; menu: string }
+const { home = "/", suffix, menu, nav, actions, width = "site", labels = {} } = Astro.props;
+const L: HeaderLabels = { skip: "Skip to content", home: suffix ? `foldrun ${suffix} home` : "foldrun home", nav: "Main", menu: "Menu", ...labels };
 const path = Astro.url.pathname;
 const current = (href: string) => (href.startsWith("/") && href !== "/" && path.startsWith(href) ? "page" : undefined);
 const menuLinks = menu ? menu.columns.flatMap((c) => c.links) : [];
@@ -40,11 +44,11 @@ const menuLinks = menu ? menu.columns.flatMap((c) => c.links) : [];
 
 <header id="site-header" class="sticky top-0 z-40 isolate border-b border-transparent" data-header>
   <div aria-hidden="true" class="header-bg absolute inset-0 -z-10 bg-paper/80 backdrop-blur-md"></div>
-  <a href="#main" class="sr-only rounded-md bg-surface px-3 py-1 focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50">Skip to content</a>
+  <a href="#main" class="sr-only rounded-md bg-surface px-3 py-1 focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50">{L.skip}</a>
   <div class:list={[width === "wide" ? "container-wide" : "container-site", " flex h-16 items-center gap-6"]}>
-    <a href={home} class="shrink-0 rounded-md" aria-label={suffix ? `foldrun ${suffix} home` : "foldrun home"}><Logo suffix={suffix} /></a>
+    <a href={home} class="shrink-0 rounded-md" aria-label={L.home}><Logo suffix={suffix} /></a>
 
-    <nav aria-label="Main" class="hidden flex-1 items-center gap-1 lg:flex">
+    <nav aria-label={L.nav} class="hidden flex-1 items-center gap-1 lg:flex">
       {menu && <div class="menu" data-menu>
         <a
           href={menu.href}
@@ -88,20 +92,20 @@ const menuLinks = menu ? menu.columns.flatMap((c) => c.links) : [];
       ))}
     </nav>
 
-    <div class="ml-auto flex items-center gap-2">
+    <div class="ms-auto flex items-center gap-2">
       {actions.map((a) => (
         <Button href={a.href} signup={a.signup} variant={a.variant ?? "primary"} size="sm" class={a.variant === "outline" ? "max-md:hidden" : undefined}>{a.label}</Button>
       ))}
       <!-- The phone menu: our own toggle. Without JavaScript the button is
            not shown and "Menu" jumps to the footer's links instead. -->
-      <a href="#footer-nav" class="nojs-only grid h-9 place-items-center rounded-md px-2 text-sm font-medium lg:hidden">Menu</a>
-      <button type="button" class="js-only grid size-9 cursor-pointer place-items-center rounded-md text-fg transition-colors hover:bg-muted lg:hidden" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu" data-mobile-toggle>
+      <a href="#footer-nav" class="nojs-only grid h-9 place-items-center rounded-md px-2 text-sm font-medium lg:hidden">{L.menu}</a>
+      <button type="button" class="js-only grid size-9 cursor-pointer place-items-center rounded-md text-fg transition-colors hover:bg-muted lg:hidden" aria-label={L.menu} aria-expanded="false" aria-controls="mobile-menu" data-mobile-toggle>
         <Icon name="menu" class="m-open size-5" />
         <Icon name="x" class="m-close size-5" />
       </button>
       <div id="mobile-menu" class="js-only fixed inset-x-0 top-16 bottom-0 overflow-y-auto overscroll-contain bg-paper lg:hidden" data-collapsed data-mobile-panel>
         <div class="container-site flex min-h-full flex-col gap-8 py-6">
-          <nav aria-label="Main" class="divide-y border-b">
+          <nav aria-label={L.nav} class="divide-y border-b">
             {menu && <Disclosure id="mobile-product" class="py-1" buttonClass="py-3 text-2xl font-medium tracking-[-0.02em]">
               <Fragment slot="summary">{menu.label} <Icon name="chevron-down" class="size-5 text-fg-muted transition-transform group-aria-expanded:rotate-180" /></Fragment>
               <ul class="space-y-1 pb-4">

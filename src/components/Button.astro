@@ -1,6 +1,7 @@
 ---
-// Every button on the site is this: a link styled as a button (the site
-// has no forms, so every action goes somewhere). Page calls to action are
+// Every button on the site is this. With href it is a link styled as a
+// button (most actions go somewhere); without one it is a real <button>
+// (type "button" unless told "submit") for a form. Page calls to action are
 // pills; the header's are small rounded buttons. primary is ink, outline a
 // surface with a hairline, ghost text that fills on hover.
 //
@@ -18,7 +19,10 @@
 //   no answer                → as rendered: the app's page tells the truth.
 // The server renders the open state, so nothing moves unless it must.
 interface Props {
-  href: string;
+  /** Omit for a <button>. */
+  href?: string;
+  /** A <button>'s type. */
+  type?: "button" | "submit";
   variant?: "primary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
   shape?: "pill" | "rounded";
@@ -28,9 +32,9 @@ interface Props {
   class?: string;
   [key: string]: unknown;
 }
-const { href, variant = "primary", size = "lg", shape = size === "sm" ? "rounded" : "pill", block = false, signup, class: cls = "", ...rest } = Astro.props;
+const { href, type = "button", variant = "primary", size = "lg", shape = size === "sm" ? "rounded" : "pill", block = false, signup, class: cls = "", ...rest } = Astro.props;
 ---
-<a
+{href !== undefined ? <a
   href={href}
   class:list={[
     "inline-flex shrink-0 items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors",
@@ -46,7 +50,22 @@ const { href, variant = "primary", size = "lg", shape = size === "sm" ? "rounded
   ]}
   data-signup={signup}
   {...rest}
-><slot /></a>
+><slot /></a> : <button
+  type={type}
+  class:list={[
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors disabled:cursor-default disabled:opacity-60",
+    size === "lg" && "h-11 px-5 text-[0.9375rem]",
+    size === "md" && "h-10 px-4 text-sm",
+    size === "sm" && "h-8 px-3 text-sm",
+    shape === "pill" ? "rounded-full" : "rounded-md",
+    variant === "primary" && "bg-ink text-on-ink enabled:hover:bg-ink-hover",
+    variant === "outline" && "border bg-surface text-fg enabled:hover:bg-muted",
+    variant === "ghost" && "text-fg-muted enabled:hover:bg-muted enabled:hover:text-fg",
+    block && "w-full",
+    cls,
+  ]}
+  {...rest}
+><slot /></button>}
 
 <script>
   // One question to the app per page (src/lib/signup-client.ts); the

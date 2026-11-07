@@ -8,7 +8,7 @@ interface Props { id: string; open?: boolean; class?: string; buttonClass?: stri
 const { id, open = false, class: cls = "", buttonClass = "", panelClass = "" } = Astro.props;
 ---
 <div class={cls} data-disclosure>
-  <button type="button" class:list={["group flex w-full cursor-pointer items-center justify-between gap-6 text-left", buttonClass]} aria-expanded={open ? "true" : "false"} aria-controls={id} data-disclosure-button>
+  <button type="button" class:list={["group flex w-full cursor-pointer items-center justify-between gap-6 text-start", buttonClass]} aria-expanded={open ? "true" : "false"} aria-controls={id} data-disclosure-button>
     <slot name="summary" />
   </button>
   <div id={id} class={panelClass} data-disclosure-panel data-collapsed={open ? undefined : ""}><slot /></div>

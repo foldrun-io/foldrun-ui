@@ -25,7 +25,7 @@ const VISIBLE = 4;
 ---
 {live ? (
   <div class="overflow-x-auto rounded-xl border bg-surface" data-live data-live-table data-state="loading">
-    <table class="w-full text-left text-sm" style={`min-width:${minWidth}`}>
+    <table class="w-full text-left rtl:text-right text-sm" style={`min-width:${minWidth}`}>
       {caption && <caption class="sr-only">{caption}</caption>}
       <thead class="border-b bg-sunken text-xs text-fg-muted">
         <tr>
@@ -47,7 +47,7 @@ const VISIBLE = 4;
   </div>
 ) : (
   <div class="overflow-x-auto rounded-xl border bg-surface">
-    <table class="w-full text-left text-sm" style={`min-width:${minWidth}`}>
+    <table class="w-full text-left rtl:text-right text-sm" style={`min-width:${minWidth}`}>
       {caption && <caption class="sr-only">{caption}</caption>}
       <thead class="border-b bg-sunken text-xs text-fg-muted">
         <tr>{columns.map((c) => <th scope="col" class="px-4 py-3 font-medium">{c}</th>)}</tr>

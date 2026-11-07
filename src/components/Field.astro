@@ -1,0 +1,33 @@
+---
+// A labelled text field: the label, the input, a line of help under it (the
+// "hint" slot, or the hint prop). Text, email, number-like and phone inputs
+// only: choices are ChoiceTiles, never the browser's own select, checkbox or
+// radio. ltr keeps an address or a number left to right on a right-to-left
+// page. Every other attribute (autocomplete, inputmode, maxlength …) goes to
+// the input.
+interface Props {
+  id: string;
+  label: string;
+  /** A muted word after the label ("optional"). */
+  aside?: string;
+  type?: "text" | "email" | "tel" | "url" | "search";
+  hint?: string;
+  ltr?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+const { id, label, aside, type = "text", hint, ltr = false, class: cls = "", ...rest } = Astro.props;
+const hasHint = hint || Astro.slots.has("hint");
+---
+<div class:list={["space-y-2", cls]}>
+  <label for={id} class="block text-sm font-medium text-fg">{label}{aside && <span class="ms-1.5 font-normal text-fg-muted">{aside}</span>}</label>
+  <input
+    id={id}
+    type={type}
+    dir={ltr ? "ltr" : undefined}
+    aria-describedby={hasHint ? `${id}-hint` : undefined}
+    class="block h-11 w-full rounded-lg border bg-surface px-3 text-base text-fg transition-colors placeholder:text-fg-subtle hover:border-line-strong focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-soft"
+    {...rest}
+  />
+  {hasHint && <p id={`${id}-hint`} class="text-sm text-fg-muted"><slot name="hint">{hint}</slot></p>}
+</div>

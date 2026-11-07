@@ -1,0 +1,39 @@
+---
+// The right-to-left page: lang "fa", the first-paint script as a file
+// (strictCsp), and the form pieces (Field, ChoiceTiles, DataList, a <button>
+// Button, Callout tones), so CI builds and checks them the way foldrun.ir uses them.
+import BaseLayout from "../../src/layouts/BaseLayout.astro";
+import Header from "../../src/components/Header.astro";
+import Footer from "../../src/components/Footer.astro";
+import Section from "../../src/components/Section.astro";
+import Split from "../../src/components/Split.astro";
+import Steps from "../../src/components/Steps.astro";
+import Faq from "../../src/components/Faq.astro";
+import Field from "../../src/components/Field.astro";
+import ChoiceTiles from "../../src/components/ChoiceTiles.astro";
+import DataList from "../../src/components/DataList.astro";
+import Button from "../../src/components/Button.astro";
+import Callout from "../../src/components/Callout.astro";
+import Card from "../../src/components/Card.astro";
+---
+<BaseLayout title="نمونهٔ راست به چپ" description="اجزای کیت در صفحهٔ فارسی." siteUrl="https://ui.foldrun.invalid" lang="fa" ogLocale="fa_IR" siteName="foldrun.ir" strictCsp>
+  <Header slot="header" nav={[{ href: "/", label: "خانه" }]} actions={[{ href: "#", label: "ورود", variant: "outline" }, { href: "#", label: "خرید اعتبار" }]}
+    labels={{ skip: "رفتن به محتوا", home: "صفحهٔ اصلی", nav: "منوی اصلی", menu: "منو" }} />
+  <Section>
+    <Split level="h1" title="خرید اعتبار" lead="یک سطر توضیح." bullets={["یک", "دو"]}>
+      <form class="space-y-6 rounded-xl border bg-surface p-6">
+        <Field id="email" label="ایمیل حساب" type="email" ltr autocomplete="email"><Fragment slot="hint">حساب ندارید؟ <a href="#">ثبت‌نام کنید</a></Fragment></Field>
+        <ChoiceTiles name="usd" label="بسته‌ها" items={[{ value: 10, title: "۱۰ دلار", body: "۱٬۰۰۰ اعتبار", note: "برای امتحان" }, { value: 50, title: "۵۰ دلار", body: "۵٬۰۰۰ اعتبار", badge: "پیشنهاد ما" }]} />
+        <Field id="mobile" label="شمارهٔ موبایل" aside="(اختیاری)" type="tel" ltr />
+        <Callout tone="danger" role="alert">پیام خطا</Callout>
+        <DataList rows={[{ label: "حساب", value: "a***@example.com", ltr: true }, { label: "قابل پرداخت", value: "۹۵۰٬۰۰۰ تومان", strong: true }]} />
+        <Button type="submit" block>بررسی</Button>
+      </form>
+    </Split>
+  </Section>
+  <Section tone="raised"><Steps locale="fa" items={[{ icon: "wallet", title: "یک", body: "متن" }, { title: "دو", body: "متن" }, { title: "سه", body: "متن" }]} /></Section>
+  <Section><Card href="/" icon="cloud" title="کارت" body="متن" /><Callout tone="success" title="پرداخت موفق" icon="circle-check">متن</Callout></Section>
+  <Section><Faq title="پرسش‌های رایج" items={[["آیا …؟", "بله، …"]]} /></Section>
+  <Footer slot="footer" columns={[{ title: "foldrun.ir", links: [{ href: "/", label: "قوانین" }] }]} notes={["© ۲۰۲۶ foldrun"]} contact="hello@foldrun.io"
+    labels={{ nav: "پیوندها", theme: { group: "پوسته", system: "پوستهٔ سیستم", light: "روشن", dark: "تیره" } }}><span>نشان</span></Footer>
+</BaseLayout>

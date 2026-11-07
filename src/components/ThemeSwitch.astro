@@ -4,13 +4,16 @@
 // prefers-color-scheme again. BaseLayout applies a saved choice before the
 // first paint.
 import Icon from "./Icon.astro";
+export interface ThemeLabels { group: string; system: string; light: string; dark: string }
+interface Props { labels?: Partial<ThemeLabels> }
+const L: ThemeLabels = { group: "Theme", system: "Use the system theme", light: "Use the light theme", dark: "Use the dark theme", ...Astro.props.labels };
 const CHOICES = [
-  { id: "system", label: "Use the system theme", icon: "monitor" },
-  { id: "light", label: "Use the light theme", icon: "sun" },
-  { id: "dark", label: "Use the dark theme", icon: "moon" },
+  { id: "system", label: L.system, icon: "monitor" },
+  { id: "light", label: L.light, icon: "sun" },
+  { id: "dark", label: L.dark, icon: "moon" },
 ];
 ---
-<div role="group" aria-label="Theme" class="inline-flex items-center gap-0.5 rounded-full border bg-surface p-0.5" data-theme-switch>
+<div role="group" aria-label={L.group} class="inline-flex items-center gap-0.5 rounded-full border bg-surface p-0.5" data-theme-switch>
   {CHOICES.map((c) => (
     <button type="button" data-theme-choice={c.id} aria-label={c.label} aria-pressed={c.id === "system" ? "true" : "false"} class="grid size-7 place-items-center rounded-full text-fg-muted transition-colors hover:text-fg aria-pressed:bg-muted aria-pressed:text-fg"><Icon name={c.icon} class="size-3.5" /></button>
   ))}

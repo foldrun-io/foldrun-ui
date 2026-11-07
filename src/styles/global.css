@@ -96,6 +96,11 @@
   --shadow-b: rgb(0 0 0 / 0.08);
   --shadow-c: rgb(0 0 0 / 0.16);
   --gutter: 1rem;
+  /* The typefaces. A site with its own (foldrun.ir's Persian face) sets
+   * these two on :root in its own stylesheet and passes its font file to
+   * BaseLayout's fontPreload. */
+  --font-site: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-site-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 @media (min-width: 48rem) { :root { --gutter: 1.5rem; } }
 @media (min-width: 80rem) { :root { --gutter: 2rem; } }
@@ -216,8 +221,8 @@
 }
 
 @theme inline {
-  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--font-site);
+  --font-mono: var(--font-site-mono);
 
   --color-paper: var(--paper);
   --color-background: var(--background);
@@ -432,7 +437,7 @@ td.live-fallback, th.live-fallback { display: none; }
 .prose a { color: var(--link); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--link) 40%, transparent); }
 .prose a:hover { text-decoration-color: var(--link); }
 .prose strong { color: var(--fg); font-weight: 600; }
-.prose ul, .prose ol { padding-left: 1.25rem; }
+.prose ul, .prose ol { padding-inline-start: 1.25rem; }
 .prose ul { list-style: disc; }
 .prose ol { list-style: decimal; }
 .prose li + li { margin-top: 0.4rem; }
@@ -456,8 +461,8 @@ td.live-fallback, th.live-fallback { display: none; }
 }
 .prose pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 .prose blockquote {
-  border-left: 2px solid var(--line-strong);
-  padding-left: 1rem;
+  border-inline-start: 2px solid var(--line-strong);
+  padding-inline-start: 1rem;
   color: var(--fg-muted);
 }
 .prose table {
@@ -470,18 +475,28 @@ td.live-fallback, th.live-fallback { display: none; }
 .prose th, .prose td {
   border: 1px solid var(--line);
   padding: 0.5rem 0.75rem;
-  text-align: left;
+  text-align: start;
   vertical-align: top;
 }
 .prose th { color: var(--fg); font-weight: 600; background: var(--sunken); }
 .prose hr { border-color: var(--line); }
 .prose :is(h2, h3) { position: relative; scroll-margin-top: 5rem; }
 .prose :is(h2, h3) > a.anchor {
-  position: absolute; left: -1.1rem; text-decoration: none;
+  position: absolute; inset-inline-start: -1.1rem; text-decoration: none;
   color: var(--fg-subtle); opacity: 0; transition: opacity 0.12s;
 }
 .prose :is(h2, h3):hover > a.anchor { opacity: 1; }
 .prose td:first-child code { white-space: nowrap; }
+
+/* Right-to-left scripts (foldrun.ir is Persian). The components use
+ * logical properties (ms-, ps-, border-s, text-start), so the layout mirrors
+ * by itself under <html dir="rtl">. What does not carry over is the Latin
+ * typography: tracking breaks the joins of a cursive script, and the tight
+ * display leading clips its dots and descenders. */
+html:is(:lang(fa), :lang(ar)), html:is(:lang(fa), :lang(ar)) * { letter-spacing: normal; }
+html:is(:lang(fa), :lang(ar)) :is(.t-display, .prose h1) { line-height: 1.35; }
+html:is(:lang(fa), :lang(ar)) .t-lead { line-height: 1.9; }
+html:is(:lang(fa), :lang(ar)) .prose { line-height: 2; }
 
 /* Reduced motion: no movement anywhere. */
 @media (prefers-reduced-motion: reduce) {

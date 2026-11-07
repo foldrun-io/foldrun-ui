@@ -1,0 +1,45 @@
+---
+// One choice from a few, as tiles (packages, amounts): our own buttons with
+// aria-pressed, never the browser's radio inputs. Each tile has a title (the
+// amount), a line under it, an optional small note and an optional badge
+// (the suggested one). The tiles carry data-choice={name} and
+// data-value={value}; a click presses one and lets go of the rest, and the
+// group sends a "choice" event ({ detail: value }). A page may also press
+// one itself by setting aria-pressed.
+import Badge from "./Badge.astro";
+export interface Choice { value: string | number; title: string; body?: string; note?: string; badge?: string; label?: string }
+interface Props { name: string; items: Choice[]; label: string; columns?: 2 | 3 | 4; class?: string }
+const { name, items, label, columns = 4, class: cls = "" } = Astro.props;
+const cols = { 2: "grid-cols-2", 3: "grid-cols-2 sm:grid-cols-3", 4: "grid-cols-2 sm:grid-cols-4" }[columns];
+---
+<div role="group" aria-label={label} class:list={["grid gap-2", cols, cls]} data-choices={name}>
+  {items.map((c) => (
+    <button
+      type="button"
+      aria-pressed="false"
+      aria-label={c.label}
+      data-choice={name}
+      data-value={c.value}
+      class="flex min-w-0 cursor-pointer flex-col items-start gap-1 rounded-lg border bg-surface p-3 text-start transition-colors hover:border-line-strong aria-pressed:border-ink aria-pressed:bg-sunken aria-pressed:shadow-[inset_0_0_0_1px_var(--ink)] sm:p-4"
+    >
+      <span class="text-lg font-semibold tabular-nums">{c.title}</span>
+      {c.body && <span class="text-sm text-fg-muted">{c.body}</span>}
+      {c.note && <span class="text-xs text-fg-muted">{c.note}</span>}
+      {c.badge && <Badge tone="success" class="mt-1">{c.badge}</Badge>}
+    </button>
+  ))}
+</div>
+
+<script>
+  for (const group of document.querySelectorAll<HTMLElement>("[data-choices]")) {
+    if (group.dataset.ready) continue;
+    group.dataset.ready = "1";
+    const tiles = [...group.querySelectorAll<HTMLButtonElement>("[data-choice]")];
+    for (const t of tiles) {
+      t.addEventListener("click", () => {
+        for (const o of tiles) o.setAttribute("aria-pressed", String(o === t));
+        group.dispatchEvent(new CustomEvent("choice", { detail: t.dataset.value }));
+      });
+    }
+  }
+</script>

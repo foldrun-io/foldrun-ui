@@ -34,7 +34,7 @@ const D = headingLevel === "h3" ? "h2" : "p";
               <a href={e.href} class="group block space-y-3">
                 <H class="text-xl font-semibold tracking-[-0.02em] group-hover:underline group-hover:underline-offset-4 sm:text-2xl">{e.title}</H>
                 <p class="max-w-2xl leading-7 text-pretty text-fg-muted">{e.body}</p>
-                <p class="inline-flex items-center gap-1 text-sm font-medium">Read <Icon name="arrow-right" class="size-3.5 transition-transform group-hover:translate-x-0.5" /></p>
+                <p class="inline-flex items-center gap-1 text-sm font-medium">Read <Icon name="arrow-right" class="size-3.5 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" /></p>
               </a>
             ) : (
               <Fragment>

@@ -1,10 +1,13 @@
 ---
 // A Lucide icon by name (src/lib/icons.ts), drawn at 24px and scaled by its
 // class. Decoration only: the words beside it say what it means. An unknown
-// name draws a plain circle rather than failing the build.
+// name draws a plain circle rather than failing the build. Icons that point
+// along the line of text (arrows, chevrons) are mirrored on a right-to-left
+// page; the rest are drawn as they are.
 import { ICONS } from "../lib/icons.ts";
 interface Props { name?: string; class?: string; strokeWidth?: number }
 const { name, class: cls = "size-5", strokeWidth = 1.75 } = Astro.props;
 const inner = (name && ICONS[name]) || '<circle cx="12" cy="12" r="9"/>';
+const MIRROR = new Set(["arrow-right", "arrow-left", "arrow-up-right"]);
 ---
-<svg class={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width={strokeWidth} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={inner} />
+<svg class:list={[cls, name && MIRROR.has(name) && "rtl:-scale-x-100"]} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width={strokeWidth} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={inner} />

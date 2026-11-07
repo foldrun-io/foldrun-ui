@@ -1,9 +1,10 @@
 ---
 // The footer: link columns, the mark, a line of small print, the status
 // dot (asked of the platform once the page is idle; grey until it answers)
-// and the theme switch. Every word and link is a prop.
+// and the theme switch. Every word and link is a prop. Anything in the
+// default slot (a trust seal) sits beside the mark.
 import Logo from "./Logo.astro";
-import ThemeSwitch from "./ThemeSwitch.astro";
+import ThemeSwitch, { type ThemeLabels } from "./ThemeSwitch.astro";
 export interface FooterColumn { title: string; links: { href: string; label: string }[] }
 interface Props {
   columns: FooterColumn[];
@@ -16,14 +17,16 @@ interface Props {
   statusHref?: string;
   /** "wide" lines the footer up with a wide page (the docs). */
   width?: "site" | "wide";
+  /** The footer's own words, for a page in another language. */
+  labels?: { nav?: string; status?: string; theme?: Partial<ThemeLabels> };
 }
-const { columns, notes = [], contact, statusApi, statusHref, width = "site" } = Astro.props;
+const { columns, notes = [], contact, statusApi, statusHref, width = "site", labels = {} } = Astro.props;
 const cols = columns.length >= 5 ? "sm:grid-cols-3 lg:grid-cols-5" : columns.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-4";
 ---
 
 <footer class="border-t bg-paper">
   <div class:list={[width === "wide" ? "container-wide" : "container-site", " space-y-14 py-14 sm:py-16"]}>
-    <nav id="footer-nav" aria-label="Footer" class:list={["grid grid-cols-2 gap-x-6 gap-y-10", cols]}>
+    <nav id="footer-nav" aria-label={labels.nav ?? "Footer"} class:list={["grid grid-cols-2 gap-x-6 gap-y-10", cols]}>
       {columns.map((col) => (
         <div class="min-w-0 space-y-4">
           <h2 class="text-sm font-medium">{col.title}</h2>
@@ -36,7 +39,7 @@ const cols = columns.length >= 5 ? "sm:grid-cols-3 lg:grid-cols-5" : columns.len
       ))}
     </nav>
     <div class="space-y-6">
-      <Logo mark />
+      {Astro.slots.has("default") ? <div class="flex flex-wrap items-center justify-between gap-6"><Logo mark /><slot /></div> : <Logo mark />}
       <div class="flex flex-col gap-5 text-sm text-fg-muted md:flex-row md:items-center md:justify-between">
         <div class="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
           {notes.map((n) => <span>{n}</span>)}
@@ -46,10 +49,10 @@ const cols = columns.length >= 5 ? "sm:grid-cols-3 lg:grid-cols-5" : columns.len
           {statusHref && (
             <a href={statusHref} class="inline-flex items-center gap-2 transition-colors hover:text-fg" data-status-link data-status-api={statusApi}>
               <span class="size-2 rounded-full bg-fg-subtle" data-status-dot aria-hidden="true"></span>
-              <span data-status-text>System status</span>
+              <span data-status-text>{labels.status ?? "System status"}</span>
             </a>
           )}
-          <ThemeSwitch />
+          <ThemeSwitch labels={labels.theme} />
         </div>
       </div>
     </div>

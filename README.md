@@ -13,7 +13,7 @@ the `.astro` files and compiles them with its own Astro and Tailwind.
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.1.2" }
+"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.2.0" }
 ```
 
 ```astro
@@ -34,13 +34,42 @@ import Hero from "@foldrun/ui/components/Hero.astro";
 the fonts); a site adds nothing unless it has styles of its own. Every
 colour, size and radius is a token in `src/styles/global.css`.
 
+### Another language, right to left (foldrun.ir)
+
+```astro
+<BaseLayout lang="fa" ogLocale="fa_IR" siteName="foldrun.ir" strictCsp
+  fontPreload="/fonts/Estedad-wght-v8.6.woff2" …>
+  <Header slot="header" labels={{ skip: "…", home: "…", nav: "…", menu: "…" }} … />
+  …
+  <Footer slot="footer" labels={{ nav: "…", theme: { group: "…", system: "…", light: "…", dark: "…" } }} …>
+    <!-- anything beside the mark: a trust seal -->
+  </Footer>
+</BaseLayout>
+```
+
+- `lang` sets `dir` (right to left for fa, ar, he, ur). The components use
+  logical properties (`ms-`, `ps-`, `border-s`, `text-start`), so they
+  mirror by themselves; arrows mirror too. Tracking is off and display
+  leading is looser for Persian and Arabic (global.css).
+- The typeface: set `--font-site` (and `--font-site-mono`) on `:root` in
+  the site's own stylesheet, and pass its file as `fontPreload`.
+- `strictCsp` loads the first-paint script (`src/lib/boot.js`: `html.js`,
+  the saved theme) as a file instead of inline, for a policy with no
+  `'unsafe-inline'`. Astro inlines its own small scripts unless the site
+  sets `vite.build.assetsInlineLimit: 0`; a strict-CSP site sets it.
+- Numbers the components print: `Steps` / `StepNumber` take `locale`
+  (`"fa"` → ۱ ۲ ۳). Everything else prints what the site passes.
+- Also for any page: `noindex`, `canonical`, `image` / `imageAlt` (a large
+  share card), and a `head` slot.
+
 ## What is here
 
 | | |
 |---|---|
 | `src/layouts/BaseLayout.astro` | head, meta, schema.org, theme before first paint, fonts, header and footer slots |
-| `src/components/` | Header, Footer, ThemeSwitch, Hero, Section, SectionTitle, Button, ButtonRow, Card, FeatureGrid, Split, MediaPanel, Panel, TracePanel, CodePanel, Steps, StepNumber, StatGrid, PricingCards, PlanCard, ComparisonTable, Faq, Disclosure, Timeline, Callout, Badge, Chip, Check, Icon, IconTile, Logo, Monogram, Prose, ProductTour, ScreenshotFrame, CtaBand |
+| `src/components/` | Header, Footer, ThemeSwitch, Hero, Section, SectionTitle, Button, ButtonRow, Card, FeatureGrid, Split, MediaPanel, Panel, TracePanel, CodePanel, Steps, StepNumber, StatGrid, PricingCards, PlanCard, ComparisonTable, Faq, Disclosure, Timeline, Callout, Badge, Chip, Check, Icon, IconTile, Logo, Monogram, Prose, ProductTour, ScreenshotFrame, CtaBand; for forms: Field (a labelled text field), ChoiceTiles (one choice from a few, our own pressed buttons), DataList (name and value rows), and Button without `href` (a real `<button>`) |
 | `src/lib/icons.ts` | the Lucide icons the components draw, by name |
+| `src/lib/boot.js` | the first-paint script (`html.js`, the saved theme), for `strictCsp` |
 | `src/lib/signup-client.ts` | one request per page to the app's `GET /api/signup`: sign-up switches for buttons marked `signup`, and live plans for `PricingCards` / `ComparisonTable` |
 | `src/styles/global.css` | the tokens (the dashboard's names and values), base, prose, backdrops |
 | `fonts/` | Geist and Geist Mono, variable (SIL OFL, `fonts/GEIST-LICENSE.txt`) |
@@ -57,7 +86,8 @@ colour, size and radius is a token in `src/styles/global.css`.
 
 ## Develop
 
-`demo/` renders every component once. `npm run check` runs check-native
+`demo/` renders every component once; `demo/pages/rtl.astro` renders the
+right-to-left, strict-CSP shape and the form pieces. `npm run check` runs check-native
 and `astro check`; `npm run demo:build` builds the demo. (No `build`,
 `prepare` or install scripts on purpose: npm would install this package's
 dev dependencies in every consuming site to "prepare" it.) Hooks: `sh

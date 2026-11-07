@@ -11,7 +11,15 @@
 //
 // Sign-up: when signupApi and signupUrl are given, buttons marked `signup`
 // follow the app's switches (src/lib/signup-client.ts reads these two).
+//
+// Another language: lang ("fa") sets the direction (right to left for fa,
+// ar, he) and og:locale; the components use logical properties, so they
+// mirror by themselves. A site with its own typeface sets --font-site in its
+// stylesheet and passes its file as fontPreload. strictCsp loads the
+// first-paint script as a file instead of inline, for a policy without
+// 'unsafe-inline'. The "head" slot takes anything else the page needs there.
 import geist from "../../fonts/Geist-Variable.woff2?url";
+import bootSrc from "../lib/boot.js?url&no-inline";
 import "../styles/global.css";
 
 interface Props {
@@ -32,34 +40,64 @@ interface Props {
   pricingUrl?: string;
   /** Extra <link rel="alternate"> feeds. */
   feeds?: { title: string; href: string }[];
+  /** The page's language ("en", "fa"). */
+  lang?: string;
+  /** Text direction; follows lang unless given. */
+  dir?: "ltr" | "rtl";
+  /** og:site_name. */
+  siteName?: string;
+  /** og:locale ("fa_IR"). */
+  ogLocale?: string;
+  /** A share image (absolute, or a path on the site), 1200×630: a large card. */
+  image?: string;
+  imageAlt?: string;
+  /** The canonical URL, when the path Astro sees is not the public one. */
+  canonical?: string;
+  /** Keep the page out of search engines (no canonical then). */
+  noindex?: boolean;
+  /** The font file to preload; false for none. Default Geist. */
+  fontPreload?: string | false;
+  /** Load the first-paint script as a file, for a CSP without 'unsafe-inline'. */
+  strictCsp?: boolean;
 }
 
-const { title, description, siteUrl, type = "website", published, structured = [], signupApi, signupUrl, pricingUrl = "/pricing/", feeds = [] } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? siteUrl);
+const { title, description, siteUrl, type = "website", published, structured = [], signupApi, signupUrl, pricingUrl = "/pricing/", feeds = [], lang = "en", siteName = "foldrun", ogLocale, image, imageAlt, noindex = false, fontPreload = geist, strictCsp = false } = Astro.props;
+const dir = Astro.props.dir ?? (/^(fa|ar|he|ur)\b/.test(lang) ? "rtl" : "ltr");
+const canonical = Astro.props.canonical ?? new URL(Astro.url.pathname, Astro.site ?? siteUrl).toString();
+const imageUrl = image ? new URL(image, Astro.site ?? siteUrl).toString() : undefined;
 const ld = (o: unknown) => JSON.stringify(o).replace(/</g, "\\u003c");
 ---
 
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang={lang} dir={dir === "rtl" ? "rtl" : undefined} class="h-full">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script is:inline>
+    {strictCsp ? <script is:inline src={bootSrc}></script> : <script is:inline>
       document.documentElement.classList.add("js");
       try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
-    </script>
+    </script>}
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    <meta property="og:site_name" content="foldrun" />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={canonical} />}
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={canonical} />
+    {ogLocale && <meta property="og:locale" content={ogLocale} />}
     {published && <meta property="article:published_time" content={published} />}
-    <!-- `summary`, not `summary_large_image`: no og:image is shipped, and a
-         large-image card with no image renders blank on X/Slack/LinkedIn. -->
-    <meta name="twitter:card" content="summary" />
+    <!-- `summary` unless the page names an image: a large-image card with no
+         image renders blank on X/Slack/LinkedIn. -->
+    {imageUrl ? (
+      <Fragment>
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+        <meta name="twitter:card" content="summary_large_image" />
+      </Fragment>
+    ) : <meta name="twitter:card" content="summary" />}
     <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     {signupApi && <meta name="foldrun-signup-api" content={signupApi} />}
@@ -68,8 +106,9 @@ const ld = (o: unknown) => JSON.stringify(o).replace(/</g, "\\u003c");
     <link rel="sitemap" href="/sitemap-index.xml" />
     {feeds.map((f) => <link rel="alternate" type="application/rss+xml" title={f.title} href={f.href} />)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href={geist} as="font" type="font/woff2" crossorigin />
+    {fontPreload && <link rel="preload" href={fontPreload} as="font" type="font/woff2" crossorigin />}
     {structured.map((s) => <script is:inline type="application/ld+json" set:html={ld(s)} />)}
+    <slot name="head" />
   </head>
   <body class="flex min-h-full flex-col bg-paper text-fg antialiased">
     <slot name="header" />

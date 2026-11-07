@@ -37,7 +37,7 @@ const ext = href ? /^(https?:|mailto:)/.test(href) : false;
   {icon && !mark && (
     <div class="flex items-start justify-between gap-3">
       <IconTile name={icon} raised={!dashed} />
-      {href && <Icon name="arrow-up-right" class:list={["size-4 shrink-0 text-fg-muted transition-transform group-hover:text-fg", !ext && "group-hover:translate-x-0.5"]} />}
+      {href && <Icon name="arrow-up-right" class:list={["size-4 shrink-0 text-fg-muted transition-transform group-hover:text-fg", !ext && "group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"]} />}
     </div>
   )}
   {mark ? (
@@ -53,7 +53,7 @@ const ext = href ? /^(https?:|mailto:)/.test(href) : false;
       {meta && metaAbove && <p class="text-sm text-fg-muted">{meta}</p>}
       <H class:list={["flex items-start justify-between gap-3 font-semibold tracking-[-0.02em]", size === "lg" ? "text-xl" : "text-lg"]}>
         <span class:list={[href && "group-hover:underline group-hover:underline-offset-4 group-hover:decoration-line-strong"]}>{title}</span>
-        {href && !icon && <Icon name="arrow-up-right" class:list={["mt-1 size-4 shrink-0 text-fg-muted transition-transform group-hover:text-fg", !ext && "group-hover:translate-x-0.5"]} />}
+        {href && !icon && <Icon name="arrow-up-right" class:list={["mt-1 size-4 shrink-0 text-fg-muted transition-transform group-hover:text-fg", !ext && "group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"]} />}
       </H>
       {body && <p class="text-sm leading-6 text-pretty text-fg-muted">{body}</p>}
       {meta && !metaAbove && <p class="font-mono text-xs text-fg-muted">{meta}</p>}

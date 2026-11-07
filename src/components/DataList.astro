@@ -1,0 +1,17 @@
+---
+// Facts in rows, a name and its value (an order, a receipt): a <dl> in a
+// framed list. A row with an id can be filled by a page's script; ltr keeps
+// an address or a code left to right on a right-to-left page; strong sets
+// the one value that matters (the amount to pay) apart.
+export interface Row { label: string; value?: string; id?: string; ltr?: boolean; mono?: boolean; strong?: boolean; muted?: boolean }
+interface Props { rows: Row[]; class?: string }
+const { rows, class: cls = "" } = Astro.props;
+---
+<dl class:list={["divide-y rounded-lg border bg-surface text-sm", cls]}>
+  {rows.map((r) => (
+    <div class="flex items-baseline justify-between gap-4 px-4 py-3">
+      <dt class="shrink-0 text-fg-muted">{r.label}</dt>
+      <dd id={r.id} dir={r.ltr ? "ltr" : undefined} class:list={["min-w-0 text-end break-words", r.mono && "font-mono text-xs", r.strong ? "text-base font-semibold" : "font-medium", r.muted && "font-normal text-fg-muted"]}>{r.value}</dd>
+    </div>
+  ))}
+</dl>

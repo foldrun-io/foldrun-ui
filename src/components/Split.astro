@@ -12,12 +12,15 @@ interface Props {
   sticky?: boolean;
   align?: "center" | "start";
   headingId?: string;
+  /** h1 when the split opens the page. */
+  level?: "h1" | "h2";
 }
-const { title, lead, bullets = [], reverse = false, sticky = false, align = "center", headingId } = Astro.props;
+const { title, lead, bullets = [], reverse = false, sticky = false, align = "center", headingId, level = "h2" } = Astro.props;
+const H = level;
 ---
 <div class:list={["grid gap-12 lg:grid-cols-12 lg:gap-16", align === "center" ? "items-center" : "items-start"]}>
   <div class:list={["min-w-0 space-y-6 lg:col-span-5", reverse && "lg:order-2", sticky && "lg:sticky lg:top-24"]}>
-    <h2 id={headingId} class="t-display t-h2">{title}</h2>
+    <H id={headingId} class="t-display t-h2">{title}</H>
     {lead && <p class="t-lead">{lead}</p>}
     {bullets.length > 0 && <Check class="border-t pt-6" items={bullets} />}
     {Astro.slots.has("actions") && <div class="flex flex-wrap gap-3 pt-2"><slot name="actions" /></div>}

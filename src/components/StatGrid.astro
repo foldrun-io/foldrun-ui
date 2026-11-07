@@ -6,11 +6,11 @@ export interface Stat { icon?: string; value: string | number; label: string; hr
 interface Props { items: Stat[]; class?: string }
 const { items, class: cls = "" } = Astro.props;
 ---
-<ul class:list={["grid grid-cols-2 self-start border-t border-l bg-surface", cls]}>
+<ul class:list={["grid grid-cols-2 self-start border-t border-s bg-surface", cls]}>
   {items.map((s) => {
     const Tag = s.href ? "a" : "div";
     return (
-      <li class="border-r border-b">
+      <li class="border-e border-b">
         <Tag href={s.href} class:list={["group flex h-full flex-col gap-6 p-5 sm:p-6", s.href && "transition-colors hover:bg-sunken"]}>
           {s.icon && <Icon name={s.icon} class="size-5" />}
           <div>

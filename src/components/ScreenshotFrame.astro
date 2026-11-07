@@ -15,7 +15,7 @@ interface Props {
   eager?: boolean;    // the hero's image: load at once
   class?: string;
 }
-const { name, base = "/images/product", width = 1920, height = 1200, alt, url = "app.foldrun.io", eager = false, class: cls = "" } = Astro.props;
+const { name, base = "/images/product", width = 1920, height = 1200, alt, url, eager = false, class: cls = "" } = Astro.props;
 const loading = eager ? "eager" : "lazy";
 const fp = eager ? "high" : "auto";
 ---
@@ -26,7 +26,7 @@ const fp = eager ? "high" : "auto";
       <span class="size-2.5 rounded-full bg-line-strong"></span>
       <span class="size-2.5 rounded-full bg-line-strong"></span>
     </span>
-    <span class="mx-auto block h-6 min-w-0 max-w-sm flex-1 truncate rounded-md border bg-surface px-3 text-center font-mono text-[11px] leading-[22px] text-fg-muted">{url}</span>
+    {url ? <span class="mx-auto block h-6 min-w-0 max-w-sm flex-1 truncate rounded-md border bg-surface px-3 text-center font-mono text-[11px] leading-[22px] text-fg-muted">{url}</span> : <span class="flex-1" />}
     <span class="w-[42px] shrink-0" aria-hidden="true"></span>
   </div>
   <img src={`${base}/${name}.webp`} alt={alt} width={width} height={height} loading={loading} fetchpriority={fp} decoding="async" class="only-light block h-auto w-full" />

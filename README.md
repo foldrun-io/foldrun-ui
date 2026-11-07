@@ -13,7 +13,7 @@ the `.astro` files and compiles them with its own Astro and Tailwind.
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.1.0" }
+"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.1.1" }
 ```
 
 ```astro
@@ -58,7 +58,9 @@ colour, size and radius is a token in `src/styles/global.css`.
 ## Develop
 
 `demo/` renders every component once. `npm run check` runs check-native
-and `astro check`; `npm run build` builds the demo. Hooks: `sh
+and `astro check`; `npm run demo:build` builds the demo. (No `build`,
+`prepare` or install scripts on purpose: npm would install this package's
+dev dependencies in every consuming site to "prepare" it.) Hooks: `sh
 .githooks/install.sh`. To try a change in a site before tagging, point its
 dependency at `file:../foldrun-ui`.
 

@@ -13,7 +13,7 @@ the `.astro` files and compiles them with its own Astro and Tailwind.
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.2.1" }
+"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.2.2" }
 ```
 
 ```astro

@@ -95,7 +95,9 @@ export function startSignup() {
   if (!api) { settle(null); return; }
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 6000);
-  fetch(api, { signal: ctl.signal, cache: "no-store", credentials: "omit" })
+  // The browser's own cache: /api/signup answers `max-age=60`, so a visitor
+  // reading five pages asks once, and a switch turned off shows within a minute.
+  fetch(api, { signal: ctl.signal, credentials: "omit" })
     .then((r) => (r.ok ? r.json() : null))
     .then((j) => settle(parse(j)))
     .catch(() => settle(null))

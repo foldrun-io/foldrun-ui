@@ -1,0 +1,81 @@
+---
+// The shell every page of every foldrun web property shares: the head
+// (title, description, canonical, Open Graph, schema.org), the theme before
+// first paint, the font, then a header slot, the page, a footer slot.
+//
+// The theme: a tiny inline script sets <html data-theme> from the theme
+// switch's saved choice before the first paint, so a dark-mode reader never
+// sees a white flash; it also marks html.js so disclosures and menus hide
+// only when there is script to open them. Without a choice the page follows
+// the system.
+//
+// Sign-up: when signupApi and signupUrl are given, buttons marked `signup`
+// follow the app's switches (src/lib/signup-client.ts reads these two).
+import geist from "../../fonts/Geist-Variable.woff2?url";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  /** The site's origin, for the canonical URL when Astro.site is unset. */
+  siteUrl: string;
+  /** Article pages set this so the card and the crawlers know what it is. */
+  type?: "website" | "article";
+  /** ISO date, for articles. */
+  published?: string;
+  /** schema.org objects for this page. */
+  structured?: Record<string, unknown>[];
+  /** GET <app>/api/signup and the app's sign-up page. */
+  signupApi?: string;
+  signupUrl?: string;
+  /** Where the plans are, for "Choose a plan" when only paid sign-up is open. */
+  pricingUrl?: string;
+  /** Extra <link rel="alternate"> feeds. */
+  feeds?: { title: string; href: string }[];
+}
+
+const { title, description, siteUrl, type = "website", published, structured = [], signupApi, signupUrl, pricingUrl = "/pricing/", feeds = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? siteUrl);
+const ld = (o: unknown) => JSON.stringify(o).replace(/</g, "\\u003c");
+---
+
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.add("js");
+      try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content="foldrun" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    {published && <meta property="article:published_time" content={published} />}
+    <!-- `summary`, not `summary_large_image`: no og:image is shipped, and a
+         large-image card with no image renders blank on X/Slack/LinkedIn. -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    {signupApi && <meta name="foldrun-signup-api" content={signupApi} />}
+    {signupUrl && <meta name="foldrun-signup-url" content={signupUrl} />}
+    {signupApi && <meta name="foldrun-pricing-url" content={pricingUrl} />}
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {feeds.map((f) => <link rel="alternate" type="application/rss+xml" title={f.title} href={f.href} />)}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={geist} as="font" type="font/woff2" crossorigin />
+    {structured.map((s) => <script is:inline type="application/ld+json" set:html={ld(s)} />)}
+  </head>
+  <body class="flex min-h-full flex-col bg-paper text-fg antialiased">
+    <slot name="header" />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
+</html>

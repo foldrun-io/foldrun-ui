@@ -1,0 +1,9 @@
+---
+// A vendor's tile: a letter or two of its name, never its logo — no
+// third-party marks to license or fetch, and every tile the same weight.
+interface Props { name: string; size?: "sm" | "md" }
+const { name, size = "md" } = Astro.props;
+const words = name.replace(/\(.*?\)/g, "").replace(/[^A-Za-z0-9 ]/g, "").split(/\s+/).filter(Boolean);
+const mark = (words.length > 1 ? words[0][0] + words[1][0] : (words[0] ?? "?").slice(0, 2)).toUpperCase();
+---
+<span aria-hidden="true" class:list={["grid shrink-0 place-items-center rounded-lg border bg-surface font-semibold shadow-raised", size === "sm" ? "size-8 text-[11px]" : "size-10 text-xs"]}>{mark}</span>

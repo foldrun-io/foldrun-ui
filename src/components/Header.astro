@@ -1,0 +1,202 @@
+---
+// The header: sticky, 64px. The mark, one optional full-width menu (opened on
+// hover or click), a few links, then the actions (Sign in, Get started). On
+// phones and tablets a full-screen menu with the same links. Every word and
+// link is a prop: the site and the docs pass their own.
+//
+// Without JavaScript the menu's trigger is a plain link (menu.href) and the
+// phone menu's "Menu" is a link to the footer's links, so nothing is out of
+// reach. No native <details>: the phone menu and its Product list are our
+// own toggles (Disclosure).
+
+import Logo from "./Logo.astro";
+import Icon from "./Icon.astro";
+import IconTile from "./IconTile.astro";
+import Button from "./Button.astro";
+import Disclosure from "./Disclosure.astro";
+
+export interface NavLink { href: string; label: string }
+export interface MenuLink { href: string; label: string; body?: string; icon: string }
+export interface MenuColumn { title: string; wide?: boolean; links: MenuLink[] }
+export interface HeaderAction { href: string; label: string; variant?: "primary" | "outline"; signup?: string }
+interface Props {
+  /** Where the mark goes. */
+  home?: string;
+  /** A word after the mark ("docs"). */
+  suffix?: string;
+  /** The one full-width menu (e.g. Product): its trigger falls back to `href` without JavaScript. */
+  menu?: { label: string; href: string; columns: MenuColumn[] };
+  nav: NavLink[];
+  /** Sign in, Get started. Outline ones hide on phones; all are in the phone menu. */
+  actions: HeaderAction[];
+  /** "wide" lines the header up with a wide page (the docs). */
+  width?: "site" | "wide";
+}
+const { home = "/", suffix, menu, nav, actions, width = "site" } = Astro.props;
+const path = Astro.url.pathname;
+const current = (href: string) => (href.startsWith("/") && href !== "/" && path.startsWith(href) ? "page" : undefined);
+const menuLinks = menu ? menu.columns.flatMap((c) => c.links) : [];
+---
+
+<header id="site-header" class="sticky top-0 z-40 isolate border-b border-transparent" data-header>
+  <div aria-hidden="true" class="header-bg absolute inset-0 -z-10 bg-paper/80 backdrop-blur-md"></div>
+  <a href="#main" class="sr-only rounded-md bg-surface px-3 py-1 focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50">Skip to content</a>
+  <div class:list={[width === "wide" ? "container-wide" : "container-site", " flex h-16 items-center gap-6"]}>
+    <a href={home} class="shrink-0 rounded-md" aria-label={suffix ? `foldrun ${suffix} home` : "foldrun home"}><Logo suffix={suffix} /></a>
+
+    <nav aria-label="Main" class="hidden flex-1 items-center gap-1 lg:flex">
+      {menu && <div class="menu" data-menu>
+        <a
+          href={menu.href}
+          class="menu-trigger inline-flex h-8 items-center gap-1 rounded-md px-2.5 text-sm text-fg-muted transition-colors hover:text-fg aria-expanded:text-fg"
+          aria-expanded="false"
+          aria-controls="product-menu"
+          data-menu-trigger
+        >
+          {menu.label}
+          <Icon name="chevron-down" class="chev size-3.5 transition-transform" />
+        </a>
+        <div id="product-menu" class="menu-panel absolute inset-x-0 top-full hidden border-b bg-paper" data-menu-panel>
+          <div class="container-site grid gap-x-10 gap-y-8 py-8 lg:grid-cols-4">
+            {menu.columns.map((col) => (
+              <div class:list={["min-w-0 space-y-3", col.wide && "lg:col-span-3"]}>
+                <p class="text-sm text-fg-muted">{col.title}</p>
+                <ul class:list={["grid gap-1", col.wide && "lg:grid-cols-2 lg:gap-x-6"]}>
+                  {col.links.map((l) => (
+                    <li>
+                      <a href={l.href} class="-mx-2 flex items-start gap-3 rounded-lg p-2 transition-colors hover:bg-muted">
+                        <IconTile name={l.icon} size="md" />
+                        <span class="min-w-0">
+                          <span class="block text-sm font-medium">{l.label}</span>
+                          {l.body && <span class="block text-sm text-fg-muted">{l.body}</span>}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>}
+      {nav.map((n) => (
+        <a
+          href={n.href}
+          aria-current={current(n.href)}
+          class="inline-flex h-8 items-center rounded-md px-2.5 text-sm text-fg-muted transition-colors hover:text-fg aria-[current=page]:text-fg"
+        >{n.label}</a>
+      ))}
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2">
+      {actions.map((a) => (
+        <Button href={a.href} signup={a.signup} variant={a.variant ?? "primary"} size="sm" class={a.variant === "outline" ? "max-md:hidden" : undefined}>{a.label}</Button>
+      ))}
+      <!-- The phone menu: our own toggle. Without JavaScript the button is
+           not shown and "Menu" jumps to the footer's links instead. -->
+      <a href="#footer-nav" class="nojs-only grid h-9 place-items-center rounded-md px-2 text-sm font-medium lg:hidden">Menu</a>
+      <button type="button" class="js-only grid size-9 cursor-pointer place-items-center rounded-md text-fg transition-colors hover:bg-muted lg:hidden" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu" data-mobile-toggle>
+        <Icon name="menu" class="m-open size-5" />
+        <Icon name="x" class="m-close size-5" />
+      </button>
+      <div id="mobile-menu" class="js-only fixed inset-x-0 top-16 bottom-0 overflow-y-auto overscroll-contain bg-paper lg:hidden" data-collapsed data-mobile-panel>
+        <div class="container-site flex min-h-full flex-col gap-8 py-6">
+          <nav aria-label="Main" class="divide-y border-b">
+            {menu && <Disclosure id="mobile-product" class="py-1" buttonClass="py-3 text-2xl font-medium tracking-[-0.02em]">
+              <Fragment slot="summary">{menu.label} <Icon name="chevron-down" class="size-5 text-fg-muted transition-transform group-aria-expanded:rotate-180" /></Fragment>
+              <ul class="space-y-1 pb-4">
+                {menuLinks.map((l) => (
+                  <li>
+                    <a href={l.href} class="flex items-center gap-3 rounded-md py-1.5 text-lg">
+                      <Icon name={l.icon} class="size-4 text-fg-muted" />{l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </Disclosure>}
+            {nav.map((n) => <a href={n.href} class="block py-4 text-2xl font-medium tracking-[-0.02em]">{n.label}</a>)}
+          </nav>
+          <div class="flex flex-col gap-3">
+            {actions.map((a) => <Button href={a.href} signup={a.signup} variant={a.variant ?? "primary"} shape="rounded" block>{a.label}</Button>)}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div aria-hidden="true" class="menu-scrim fixed inset-x-0 top-16 bottom-0 -z-20 hidden bg-paper/60 backdrop-blur-[2px]" data-menu-scrim></div>
+</header>
+
+<style is:global>
+  /* global: the icons are child components, outside this file's scope */
+  [data-mobile-toggle] .m-close { display: none; }
+  [data-mobile-toggle][aria-expanded="true"] .m-open { display: none; }
+  [data-mobile-toggle][aria-expanded="true"] .m-close { display: block; }
+  [data-header].scrolled, [data-header].open { border-bottom-color: var(--line); }
+  [data-header].open .header-bg { background: var(--paper); }
+  [data-header].open .menu-panel, [data-header].open .menu-scrim { display: block; }
+  [data-header].open .chev { transform: rotate(180deg); }
+  /* the open menu belongs to wide screens only */
+  @media (max-width: 63.99rem) { [data-header].open .menu-panel, [data-header].open .menu-scrim { display: none; } }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const trigger = document.querySelector<HTMLAnchorElement>("[data-menu-trigger]");
+  const panel = document.querySelector<HTMLElement>("[data-menu-panel]");
+  const scrim = document.querySelector<HTMLElement>("[data-menu-scrim]");
+  const mobile = document.querySelector<HTMLButtonElement>("[data-mobile-toggle]");
+  const mobilePanel = document.querySelector<HTMLElement>("[data-mobile-panel]");
+  const mobileOpen = () => mobile?.getAttribute("aria-expanded") === "true";
+  const setMobile = (open: boolean) => {
+    // While the full-screen menu is open, the page behind it can be neither
+    // seen nor reached: everything but the header is inert.
+    for (const el of document.body.children) if (el !== header && !el.contains(header)) (el as HTMLElement).inert = open;
+    mobile?.setAttribute("aria-expanded", String(open));
+    mobilePanel?.toggleAttribute("data-collapsed", !open);
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    header?.classList.toggle("scrolled", open || window.scrollY > 4);
+  };
+  if (header && trigger && panel) {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const set = (open: boolean) => {
+      header.classList.toggle("open", open);
+      trigger.setAttribute("aria-expanded", String(open));
+    };
+    const later = (fn: () => void, ms: number) => { clearTimeout(timer); timer = setTimeout(fn, ms); };
+    const isOpen = () => header.classList.contains("open");
+    // A click toggles; the link still works for a middle-click or without JS.
+    trigger.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      set(!isOpen());
+    });
+    trigger.addEventListener("mouseenter", () => later(() => set(true), isOpen() ? 0 : 90));
+    trigger.addEventListener("mouseleave", () => later(() => set(false), 160));
+    panel.addEventListener("mouseenter", () => clearTimeout(timer));
+    panel.addEventListener("mouseleave", () => later(() => set(false), 160));
+    scrim?.addEventListener("click", () => set(false));
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (isOpen()) { set(false); trigger.focus(); }
+    });
+    // Keyboard: leaving the panel with Tab closes it.
+    panel.addEventListener("focusout", (e) => {
+      const next = e.relatedTarget as Node | null;
+      if (next && !panel.contains(next) && next !== trigger) set(false);
+    });
+  }
+  if (header) {
+    const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 4 || mobileOpen());
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+  // The phone menu holds the page still while it is open, and closes when
+  // the screen grows past the phone layout.
+  mobile?.addEventListener("click", () => setMobile(!mobileOpen()));
+  // A link in the menu that stays on this page (#plans) still closes it.
+  mobilePanel?.addEventListener("click", (e) => { if ((e.target as Element).closest("a")) setMobile(false); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && mobileOpen()) { setMobile(false); mobile?.focus(); }
+  });
+  matchMedia("(min-width: 64rem)").addEventListener("change", (e) => { if (e.matches && mobileOpen()) setMobile(false); });
+</script>

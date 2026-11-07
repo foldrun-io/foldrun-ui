@@ -1,0 +1,73 @@
+---
+// Every component once, the way a site uses them: the package's test bed.
+// CI runs astro check and astro build over this page.
+import BaseLayout from "../../src/layouts/BaseLayout.astro";
+import Header from "../../src/components/Header.astro";
+import Footer from "../../src/components/Footer.astro";
+import Hero from "../../src/components/Hero.astro";
+import Section from "../../src/components/Section.astro";
+import SectionTitle from "../../src/components/SectionTitle.astro";
+import FeatureGrid from "../../src/components/FeatureGrid.astro";
+import Card from "../../src/components/Card.astro";
+import Split from "../../src/components/Split.astro";
+import MediaPanel from "../../src/components/MediaPanel.astro";
+import TracePanel from "../../src/components/TracePanel.astro";
+import CodePanel from "../../src/components/CodePanel.astro";
+import Steps from "../../src/components/Steps.astro";
+import StatGrid from "../../src/components/StatGrid.astro";
+import PricingCards from "../../src/components/PricingCards.astro";
+import ComparisonTable from "../../src/components/ComparisonTable.astro";
+import Faq from "../../src/components/Faq.astro";
+import Timeline from "../../src/components/Timeline.astro";
+import Callout from "../../src/components/Callout.astro";
+import Badge from "../../src/components/Badge.astro";
+import Chip from "../../src/components/Chip.astro";
+import Button from "../../src/components/Button.astro";
+import Prose from "../../src/components/Prose.astro";
+import CtaBand from "../../src/components/CtaBand.astro";
+import Disclosure from "../../src/components/Disclosure.astro";
+import Icon from "../../src/components/Icon.astro";
+import ScreenshotFrame from "../../src/components/ScreenshotFrame.astro";
+import Monogram from "../../src/components/Monogram.astro";
+
+const signup = "https://app.example.invalid/signup";
+---
+<BaseLayout title="foldrun ui" description="Every component once." siteUrl="https://ui.foldrun.invalid" signupApi="https://app.example.invalid/api/signup" signupUrl={signup}>
+  <Header slot="header" nav={[{ href: "/", label: "Home" }]} actions={[{ href: "#", label: "Sign in", variant: "outline" }, { href: signup, label: "Get started", signup: "primary" }]}
+    menu={{ label: "Product", href: "/", columns: [{ title: "Features", wide: true, links: [{ href: "/", label: "One", body: "A line", icon: "cloud" }] }] }} />
+  <Hero eyebrow="Eyebrow" title="A headline" lead="A lead." ctas={[{ href: signup, label: "Get started", signup: "primary" }, { href: "/", label: "Read" }]} />
+  <Hero variant="center" title="Centred" lead="Lead." ctas={[{ href: "/", label: "Go" }]}>
+    <Chip slot="pill" href="/"><Badge>New</Badge>A chip</Chip>
+    <ScreenshotFrame name="demo" alt="A screenshot" class="mt-10" />
+  </Hero>
+  <Section>
+    <SectionTitle title="Cells" intro="An intro." />
+    <FeatureGrid items={[{ icon: "cloud", title: "One", body: "Body", href: "/" }, { title: "Two", points: ["a", "b"] }]} />
+    <ul class="mt-6 grid gap-4 sm:grid-cols-3">
+      <li><Card href="/" icon="cloud" title="Card" body="Body" /></li>
+      <li><Card mark="Anthropic" title="Anthropic" meta="anthropic" body="A vendor" /></li>
+      <li><Card href="/" icon="plus" title="Dashed" dashed /></li>
+    </ul>
+  </Section>
+  <Section tone="dark"><Steps items={[{ icon: "play", title: "Run", body: "Body", code: "foldrun run" }, { title: "Two", body: "Body" }]} /></Section>
+  <Section>
+    <Split title="Split" lead="Lead" bullets={["one", "two"]}>
+      <Fragment slot="actions"><Button href="/" variant="outline">More</Button></Fragment>
+      <MediaPanel><TracePanel title="run" lines={[{ text: "ok", hi: true }, { text: "dim", dim: true }]} large /></MediaPanel>
+    </Split>
+    <CodePanel tabs={[{ id: "a", label: "a.md", code: "name: x  # comment" }, { id: "b", label: "b.md", code: "b" }]} caption="Caption" />
+    <StatGrid items={[{ icon: "cpu", value: 3, label: "Things" }, { value: "4", label: "More" }]} />
+    <PricingCards plans={[{ name: "Local", price: "", pitch: "Free", cta: { href: "/", label: "Install" } }, { name: "Paid", price: "$1", unit: "a month", bullets: ["a"], cta: { href: signup, label: "Start", signup: "plan:pro" }, highlight: true }]} columns={2} />
+    <PricingCards live words={{ pro: { pitch: "Pro" } }} highlight="pro" signupUrl={signup} />
+    <ComparisonTable columns={["", "A"]} rows={[["Row", { text: "to confirm", tone: "warning" }]]} />
+    <ComparisonTable live={[{ label: "Price", field: "price" }, { label: "Seats", field: "seats" }]} />
+    <Timeline items={[{ id: "w1", date: "Week 1", entries: [{ title: "T", body: "B" }] }]} />
+    <Callout title="Note" icon="shield-check" tone="warning">Text</Callout>
+    <Disclosure id="d1"><Fragment slot="summary">Open <Icon name="plus" class="size-4" /></Fragment><p>Inside</p></Disclosure>
+    <Monogram name="Exa" />
+    <Prose><h2>Prose</h2><p>Text <code>code</code></p></Prose>
+  </Section>
+  <Section width="none"><Faq items={[["Q", "A"]]} /></Section>
+  <CtaBand title="Closing" body="Body" ctas={[{ href: signup, label: "Get started", signup: "primary" }]} />
+  <Footer slot="footer" columns={[{ title: "A", links: [{ href: "/", label: "Home" }] }]} notes={["© foldrun"]} contact="hello@example.invalid" statusHref="/" />
+</BaseLayout>

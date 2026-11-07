@@ -1,0 +1,86 @@
+---
+// Code as in an editor: a tab bar (one tab per file), a copy button, the
+// code in the mono face. Tabs switch with a few lines of script; without it
+// the first file shows. A line's tone: key/value colouring is left out on
+// purpose — mono, quiet, no accent colour (cloudhost's CodePanel).
+import Icon from "./Icon.astro";
+export interface CodeTab { id: string; label: string; code: string }
+interface Props { tabs: CodeTab[]; caption?: string; class?: string; title?: string }
+const { tabs, caption, class: cls = "", title } = Astro.props;
+const uid = `code-${Math.random().toString(36).slice(2, 8)}`;
+const single = tabs.length === 1;
+// Comments after # are quieter; the first word of a shell line is the command.
+const lines = (code: string) => code.split("\n").map((line) => {
+  const hash = line.search(/(^|\s)#\s/);
+  return hash >= 0 ? [line.slice(0, hash), line.slice(hash)] : [line, ""];
+});
+---
+<figure class:list={["min-w-0 overflow-hidden rounded-xl border bg-surface text-fg", cls]} data-code>
+  <div class="flex h-11 items-center justify-between gap-2 border-b bg-sunken pl-3 pr-1.5">
+    {single ? (
+      <div class="flex min-w-0 items-center gap-2 text-sm text-fg-muted">
+        <Icon name="square-terminal" class="size-4 shrink-0" />
+        <span class="truncate">{title ?? tabs[0].label}</span>
+      </div>
+    ) : (
+      <div role="tablist" class="-mb-px flex min-w-0 self-stretch overflow-x-auto">
+        {tabs.map((t, i) => (
+          <button type="button" role="tab" id={`${uid}-t-${t.id}`} aria-controls={`${uid}-p-${t.id}`} aria-selected={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1}
+            class="flex shrink-0 items-center border-b border-transparent px-3 font-mono text-[13px] text-fg-muted transition-colors hover:text-fg aria-selected:border-fg aria-selected:text-fg" data-tab={t.id}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+    )}
+    <button type="button" class="grid size-8 shrink-0 place-items-center rounded-md text-fg-muted transition-colors hover:bg-muted hover:text-fg" aria-label="Copy code" data-copy>
+      <Icon name="copy" class="c-copy size-4" /><Icon name="check" class="c-done hidden size-4" />
+    </button>
+  </div>
+  {tabs.map((t, i) => (
+    <pre role={single ? undefined : "tabpanel"} id={`${uid}-p-${t.id}`} aria-labelledby={single ? undefined : `${uid}-t-${t.id}`} hidden={i > 0} data-panel={t.id} data-raw={t.code}
+      class="overflow-x-auto px-4 py-4 font-mono text-[13px] leading-6 text-fg-muted"><code>{lines(t.code).map(([body, comment], j, all) => (
+        <Fragment><span class="text-fg">{body}</span>{comment && <span class="text-fg-muted">{comment}</span>}{j < all.length - 1 ? "\n" : ""}</Fragment>
+      ))}</code></pre>
+  ))}
+  {caption && <figcaption class="border-t bg-sunken px-4 py-2.5 text-xs text-fg-muted">{caption}</figcaption>}
+</figure>
+
+<script>
+  for (const fig of document.querySelectorAll<HTMLElement>("[data-code]")) {
+    if (fig.dataset.ready) continue;
+    fig.dataset.ready = "1";
+    const tabs = [...fig.querySelectorAll<HTMLButtonElement>("[data-tab]")];
+    const panels = [...fig.querySelectorAll<HTMLElement>("[data-panel]")];
+    const select = (id: string, focus = false) => {
+      for (const t of tabs) {
+        const on = t.dataset.tab === id;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      }
+      for (const p of panels) p.hidden = p.dataset.panel !== id;
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => select(t.dataset.tab!));
+      t.addEventListener("keydown", (e) => {
+        const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        select(tabs[(i + d + tabs.length) % tabs.length].dataset.tab!, true);
+      });
+    });
+    const copy = fig.querySelector<HTMLButtonElement>("[data-copy]");
+    copy?.addEventListener("click", async () => {
+      const open = panels.find((p) => !p.hidden) ?? panels[0];
+      try {
+        await navigator.clipboard.writeText(open.dataset.raw ?? open.textContent ?? "");
+        copy.querySelector(".c-copy")?.classList.add("hidden");
+        copy.querySelector(".c-done")?.classList.remove("hidden");
+        setTimeout(() => {
+          copy.querySelector(".c-copy")?.classList.remove("hidden");
+          copy.querySelector(".c-done")?.classList.add("hidden");
+        }, 1500);
+      } catch { /* no clipboard */ }
+    });
+  }
+</script>

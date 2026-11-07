@@ -1,0 +1,50 @@
+---
+// Dated entries, newest first (cloudhost's changelog layout): the date on
+// the left, sticky on wide screens; the entries beside it; hairlines
+// between. The changelog has several entries a week; the blog one per post,
+// as a link.
+import Icon from "./Icon.astro";
+export interface TimelineItem {
+  id?: string;
+  date: string;
+  datetime?: string;
+  entries: { title: string; body: string; href?: string }[];
+}
+interface Props { items: TimelineItem[]; headingLevel?: "h2" | "h3" }
+const { items, headingLevel = "h3" } = Astro.props;
+const H = headingLevel;
+// With entries at h3 the date is their h2 (the changelog's weeks); with
+// entries at h2 the date is plain text (the blog's posts).
+const D = headingLevel === "h3" ? "h2" : "p";
+---
+<ol class="border-t">
+  {items.map((it) => (
+    <li id={it.id} class="grid scroll-mt-24 gap-4 border-b py-10 sm:py-14 lg:grid-cols-12 lg:gap-12">
+      <div class="lg:col-span-3">
+        <D class="text-sm font-medium text-fg-muted lg:sticky lg:top-24">
+          {it.id
+            ? <a href={`#${it.id}`} class="hover:text-fg"><time datetime={it.datetime}>{it.date}</time></a>
+            : <time datetime={it.datetime}>{it.date}</time>}
+        </D>
+      </div>
+      <ul class="min-w-0 space-y-8 lg:col-span-9">
+        {it.entries.map((e) => (
+          <li class="space-y-2">
+            {e.href ? (
+              <a href={e.href} class="group block space-y-3">
+                <H class="text-xl font-semibold tracking-[-0.02em] group-hover:underline group-hover:underline-offset-4 sm:text-2xl">{e.title}</H>
+                <p class="max-w-2xl leading-7 text-pretty text-fg-muted">{e.body}</p>
+                <p class="inline-flex items-center gap-1 text-sm font-medium">Read <Icon name="arrow-right" class="size-3.5 transition-transform group-hover:translate-x-0.5" /></p>
+              </a>
+            ) : (
+              <Fragment>
+                <H class="text-lg font-semibold tracking-[-0.02em] sm:text-xl">{e.title}</H>
+                <p class="max-w-2xl leading-7 text-pretty text-fg-muted">{e.body}</p>
+              </Fragment>
+            )}
+          </li>
+        ))}
+      </ul>
+    </li>
+  ))}
+</ol>

@@ -1,0 +1,28 @@
+---
+// Our own disclosure (the site uses no <details>/<summary>): a button with
+// aria-expanded that shows and hides the panel it controls. The panel is
+// hidden only once the page's script has run (html.js), so without
+// JavaScript everything is simply open. The "summary" slot is the button's
+// content; style its icon with group-aria-expanded:… (the button is the group).
+interface Props { id: string; open?: boolean; class?: string; buttonClass?: string; panelClass?: string }
+const { id, open = false, class: cls = "", buttonClass = "", panelClass = "" } = Astro.props;
+---
+<div class={cls} data-disclosure>
+  <button type="button" class:list={["group flex w-full cursor-pointer items-center justify-between gap-6 text-left", buttonClass]} aria-expanded={open ? "true" : "false"} aria-controls={id} data-disclosure-button>
+    <slot name="summary" />
+  </button>
+  <div id={id} class={panelClass} data-disclosure-panel data-collapsed={open ? undefined : ""}><slot /></div>
+</div>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-disclosure-button]")) {
+    if (button.dataset.ready) continue;
+    button.dataset.ready = "1";
+    const panel = document.getElementById(button.getAttribute("aria-controls") ?? "");
+    button.addEventListener("click", () => {
+      const open = button.getAttribute("aria-expanded") !== "true";
+      button.setAttribute("aria-expanded", String(open));
+      panel?.toggleAttribute("data-collapsed", !open);
+    });
+  }
+</script>

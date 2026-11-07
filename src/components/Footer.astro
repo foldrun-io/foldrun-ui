@@ -1,0 +1,83 @@
+---
+// The footer: link columns, the mark, a line of small print, the status
+// dot (asked of the platform once the page is idle; grey until it answers)
+// and the theme switch. Every word and link is a prop.
+import Logo from "./Logo.astro";
+import ThemeSwitch from "./ThemeSwitch.astro";
+export interface FooterColumn { title: string; links: { href: string; label: string }[] }
+interface Props {
+  columns: FooterColumn[];
+  /** The small print, left to right: "© 2026 foldrun", "Built in Australia". */
+  notes?: string[];
+  /** An address under the small print, as a mailto link. */
+  contact?: string;
+  /** The platform's GET /api/status, and the page that shows it. */
+  statusApi?: string;
+  statusHref?: string;
+  /** "wide" lines the footer up with a wide page (the docs). */
+  width?: "site" | "wide";
+}
+const { columns, notes = [], contact, statusApi, statusHref, width = "site" } = Astro.props;
+const cols = columns.length >= 5 ? "sm:grid-cols-3 lg:grid-cols-5" : columns.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-4";
+---
+
+<footer class="border-t bg-paper">
+  <div class:list={[width === "wide" ? "container-wide" : "container-site", " space-y-14 py-14 sm:py-16"]}>
+    <nav id="footer-nav" aria-label="Footer" class:list={["grid grid-cols-2 gap-x-6 gap-y-10", cols]}>
+      {columns.map((col) => (
+        <div class="min-w-0 space-y-4">
+          <h2 class="text-sm font-medium">{col.title}</h2>
+          <ul class="space-y-3 text-sm text-fg-muted">
+            {col.links.map((l) => (
+              <li><a href={l.href} class="transition-colors hover:text-fg">{l.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
+    <div class="space-y-6">
+      <Logo mark />
+      <div class="flex flex-col gap-5 text-sm text-fg-muted md:flex-row md:items-center md:justify-between">
+        <div class="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
+          {notes.map((n) => <span>{n}</span>)}
+          {contact && <a href={`mailto:${contact}`} class="transition-colors hover:text-fg">{contact}</a>}
+        </div>
+        <div class="flex flex-wrap items-center gap-4">
+          {statusHref && (
+            <a href={statusHref} class="inline-flex items-center gap-2 transition-colors hover:text-fg" data-status-link data-status-api={statusApi}>
+              <span class="size-2 rounded-full bg-fg-subtle" data-status-dot aria-hidden="true"></span>
+              <span data-status-text>System status</span>
+            </a>
+          )}
+          <ThemeSwitch />
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // The status dot: one request, after the page has settled.
+  const link = document.querySelector<HTMLElement>("[data-status-link]");
+  const dot = link?.querySelector<HTMLElement>("[data-status-dot]");
+  const text = link?.querySelector<HTMLElement>("[data-status-text]");
+  const api = link?.dataset.statusApi;
+  if (link && dot && text && api) {
+    const COLOR: Record<string, string> = { operational: "var(--success)", degraded: "var(--warning)", outage: "var(--danger)", maintenance: "var(--link)" };
+    const WORD: Record<string, string> = { operational: "All systems normal", degraded: "Degraded", outage: "Outage", maintenance: "Maintenance" };
+    const ask = () => {
+      const ctl = new AbortController();
+      const t = setTimeout(() => ctl.abort(), 6000);
+      fetch(api, { signal: ctl.signal, cache: "no-store" })
+        .then((r) => r.json())
+        .then((j) => {
+          if (!j || !COLOR[j.status]) return;
+          dot.style.background = COLOR[j.status];
+          text.textContent = WORD[j.status];
+        })
+        .catch(() => {})
+        .finally(() => clearTimeout(t));
+    };
+    if ("requestIdleCallback" in window) requestIdleCallback(ask, { timeout: 4000 }); else setTimeout(ask, 1500);
+  }
+</script>

@@ -1,0 +1,7 @@
+---
+// A step's number in a small circle: the loop on the home page, the steps
+// of a use case's flow.
+interface Props { n: number; class?: string }
+const { n, class: cls = "" } = Astro.props;
+---
+<span aria-hidden="true" class:list={["grid size-8 shrink-0 place-items-center rounded-full border bg-surface text-xs font-semibold tabular-nums", cls]}>{n}</span>

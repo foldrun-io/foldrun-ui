@@ -1,0 +1,24 @@
+---
+// Numbers in cells divided by hairlines: an icon, the number, what it
+// counts. A cell with href links to where the number comes from.
+import Icon from "./Icon.astro";
+export interface Stat { icon?: string; value: string | number; label: string; href?: string }
+interface Props { items: Stat[]; class?: string }
+const { items, class: cls = "" } = Astro.props;
+---
+<ul class:list={["grid grid-cols-2 self-start border-t border-l bg-surface", cls]}>
+  {items.map((s) => {
+    const Tag = s.href ? "a" : "div";
+    return (
+      <li class="border-r border-b">
+        <Tag href={s.href} class:list={["group flex h-full flex-col gap-6 p-5 sm:p-6", s.href && "transition-colors hover:bg-sunken"]}>
+          {s.icon && <Icon name={s.icon} class="size-5" />}
+          <div>
+            <p class="text-3xl font-semibold tracking-[-0.03em] tabular-nums">{s.value}</p>
+            <p class="mt-1 text-sm text-fg-muted group-hover:text-fg">{s.label}</p>
+          </div>
+        </Tag>
+      </li>
+    );
+  })}
+</ul>

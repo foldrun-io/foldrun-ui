@@ -1,0 +1,15 @@
+---
+// A run-like panel: a title bar and a few mono lines, the way the run page
+// shows a step. hi lines are the success colour, dim lines quieter. `large`
+// is the size for a page's main panel.
+import Panel from "./Panel.astro";
+export interface TraceLine { text: string; hi?: boolean; dim?: boolean }
+interface Props { title: string; lines: TraceLine[]; large?: boolean; class?: string }
+const { title, lines, large = false, class: cls = "" } = Astro.props;
+---
+
+<Panel title={title} mono class={cls}>
+  <pre class:list={["overflow-x-auto font-mono leading-relaxed", large ? "p-6 text-sm" : "p-4 text-[12px]"]}>{lines.map((l) => (
+    <span class:list={["block", l.hi ? "text-success" : l.dim ? "text-fg-muted" : "text-fg"]}>{l.text}</span>
+  ))}</pre>
+</Panel>

@@ -1,0 +1,495 @@
+@import "tailwindcss";
+
+/* The components' classes live in this package, outside the consuming
+ * site's source, so Tailwind is told where to look. */
+@source "../components";
+@source "../layouts";
+@source "../lib";
+
+/* The look (Nov 2026 redesign): the same family as the dashboard and as
+ * cloudhost's marketing site. A #fafafa page with white cards (black and
+ * #0a0a0a in dark), pure neutral greys, 1px hairlines, small radii, shadows
+ * only on what floats, one blue accent for links and focus, status colours
+ * only for status. Geist for every word, Geist Mono for code and paths. The
+ * green run dot in the logo is the one place foldrun's green appears.
+ *
+ * Two themes. <html data-theme> is the person's choice from the footer
+ * switch ("light" or "dark"); without one the page follows
+ * prefers-color-scheme. A section with .tone-dark is dark in both themes
+ * (the bands that break the page). Components use the tokens below, never
+ * raw colours. Contrast (WCAG AA) is cloudhost's, checked for every text
+ * pair in both themes. */
+
+@font-face {
+  font-family: "Geist";
+  src: url("../../fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("../../fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* dark: on when the person chose dark, inside a .tone-dark band, or when
+ * they chose nothing and the system is dark. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *, .tone-dark, .tone-dark *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
+
+/* ---- Tokens: the dashboard's (foldrun-web app/globals.css + theme-dark.css)
+ * ------------------------------------------------------------------------
+ * The same names and the same values as the dashboard, so a class reads the
+ * same in both codebases: bg-paper, bg-surface, bg-sunken, text-fg,
+ * text-fg-muted, border-line, bg-ink, text-on-ink, text-link …
+ *
+ * Two layers. The raw palette (pure neutral greys, the few status hues) is
+ * declared for light, and re-declared for dark — chosen, following the
+ * system, or inside a .tone-dark band — with the dashboard's dark values.
+ * The semantic tokens are declared once, on :root and on .tone-dark, from
+ * the palette, so they follow whichever palette is in force there. */
+
+:root {
+  color-scheme: light;
+  --white: #ffffff;
+  --black: #000000;
+  --gray-50: oklch(98.5% 0 0);
+  --gray-100: oklch(96.1% 0 0);
+  --gray-200: oklch(94% 0 0);
+  --gray-300: oklch(87% 0 0);
+  --gray-400: oklch(65.5% 0 0);
+  --gray-500: oklch(51% 0 0);
+  --gray-600: oklch(43.9% 0 0);
+  --gray-700: oklch(37.1% 0 0);
+  --gray-800: oklch(26.9% 0 0);
+  --gray-900: oklch(20.5% 0 0);
+  --emerald-50: oklch(97.9% 0.021 166.113);
+  --emerald-200: oklch(90.5% 0.093 164.15);
+  --emerald-500: oklch(69.6% 0.17 162.48);
+  --emerald-700: oklch(50.8% 0.118 165.612);
+  --amber-50: oklch(98.7% 0.022 95.277);
+  --amber-200: oklch(92.4% 0.12 95.746);
+  --amber-800: oklch(47.3% 0.137 46.201);
+  --red-50: oklch(97.1% 0.013 17.38);
+  --red-200: oklch(88.5% 0.062 18.334);
+  --red-700: oklch(50.5% 0.213 27.518);
+  --sky-50: oklch(97.7% 0.013 236.62);
+  --sky-200: oklch(90.1% 0.058 230.902);
+  --sky-700: oklch(50% 0.134 242.749);
+  --blue-100: oklch(93.2% 0.032 255.585);
+  --blue-500: oklch(62.3% 0.214 259.815);
+  --blue-600: oklch(54.6% 0.245 262.881);
+  --paper-v: #fafafa;
+  --background-v: #ffffff;
+  --shadow-a: rgb(0 0 0 / 0.06);
+  --shadow-b: rgb(0 0 0 / 0.08);
+  --shadow-c: rgb(0 0 0 / 0.16);
+  --gutter: 1rem;
+}
+@media (min-width: 48rem) { :root { --gutter: 1.5rem; } }
+@media (min-width: 80rem) { :root { --gutter: 2rem; } }
+
+/* The dark palette, twice over: chosen (or inside a dark band), and
+ * following the system. Kept identical by hand; the values are
+ * theme-dark.css's. */
+:root[data-theme="dark"], .tone-dark {
+  color-scheme: dark;
+  --white: oklch(14.5% 0 0);
+  --gray-50: oklch(18% 0 0);
+  --gray-100: oklch(21.5% 0 0);
+  --gray-200: oklch(26% 0 0);
+  --gray-300: oklch(34% 0 0);
+  --gray-400: oklch(58% 0 0);
+  --gray-500: oklch(71.5% 0 0);
+  --gray-600: oklch(78% 0 0);
+  --gray-700: oklch(85% 0 0);
+  --gray-800: oklch(90% 0 0);
+  --gray-900: oklch(94.5% 0 0);
+  --emerald-50: color-mix(in oklab, oklch(69.6% 0.17 162.48) 14%, oklch(14.5% 0 0));
+  --emerald-200: color-mix(in oklab, oklch(69.6% 0.17 162.48) 32%, oklch(14.5% 0 0));
+  --emerald-700: oklch(84.5% 0.143 164.978);
+  --amber-50: color-mix(in oklab, oklch(76.9% 0.188 70.08) 14%, oklch(14.5% 0 0));
+  --amber-200: color-mix(in oklab, oklch(76.9% 0.188 70.08) 32%, oklch(14.5% 0 0));
+  --amber-800: oklch(92.4% 0.12 95.746);
+  --red-50: color-mix(in oklab, oklch(63.7% 0.237 25.331) 14%, oklch(14.5% 0 0));
+  --red-200: color-mix(in oklab, oklch(63.7% 0.237 25.331) 32%, oklch(14.5% 0 0));
+  --red-700: oklch(80.8% 0.114 19.571);
+  --sky-50: color-mix(in oklab, oklch(68.5% 0.169 237.323) 14%, oklch(14.5% 0 0));
+  --sky-200: color-mix(in oklab, oklch(68.5% 0.169 237.323) 32%, oklch(14.5% 0 0));
+  --sky-700: oklch(82.8% 0.111 230.318);
+  --blue-100: color-mix(in oklab, oklch(62.3% 0.214 259.815) 22%, oklch(14.5% 0 0));
+  --blue-500: oklch(70.7% 0.165 254.624);
+  --blue-600: oklch(70.7% 0.165 254.624);
+  --paper-v: #000000;
+  --background-v: oklch(14.5% 0 0);
+  --shadow-a: rgb(255 255 255 / 0.08);
+  --shadow-b: rgb(0 0 0 / 0.6);
+  --shadow-c: rgb(0 0 0 / 0.8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --white: oklch(14.5% 0 0);
+    --gray-50: oklch(18% 0 0);
+    --gray-100: oklch(21.5% 0 0);
+    --gray-200: oklch(26% 0 0);
+    --gray-300: oklch(34% 0 0);
+    --gray-400: oklch(58% 0 0);
+    --gray-500: oklch(71.5% 0 0);
+    --gray-600: oklch(78% 0 0);
+    --gray-700: oklch(85% 0 0);
+    --gray-800: oklch(90% 0 0);
+    --gray-900: oklch(94.5% 0 0);
+    --emerald-50: color-mix(in oklab, oklch(69.6% 0.17 162.48) 14%, oklch(14.5% 0 0));
+    --emerald-200: color-mix(in oklab, oklch(69.6% 0.17 162.48) 32%, oklch(14.5% 0 0));
+    --emerald-700: oklch(84.5% 0.143 164.978);
+    --amber-50: color-mix(in oklab, oklch(76.9% 0.188 70.08) 14%, oklch(14.5% 0 0));
+    --amber-200: color-mix(in oklab, oklch(76.9% 0.188 70.08) 32%, oklch(14.5% 0 0));
+    --amber-800: oklch(92.4% 0.12 95.746);
+    --red-50: color-mix(in oklab, oklch(63.7% 0.237 25.331) 14%, oklch(14.5% 0 0));
+    --red-200: color-mix(in oklab, oklch(63.7% 0.237 25.331) 32%, oklch(14.5% 0 0));
+    --red-700: oklch(80.8% 0.114 19.571);
+    --sky-50: color-mix(in oklab, oklch(68.5% 0.169 237.323) 14%, oklch(14.5% 0 0));
+    --sky-200: color-mix(in oklab, oklch(68.5% 0.169 237.323) 32%, oklch(14.5% 0 0));
+    --sky-700: oklch(82.8% 0.111 230.318);
+    --blue-100: color-mix(in oklab, oklch(62.3% 0.214 259.815) 22%, oklch(14.5% 0 0));
+    --blue-500: oklch(70.7% 0.165 254.624);
+    --blue-600: oklch(70.7% 0.165 254.624);
+    --paper-v: #000000;
+    --background-v: oklch(14.5% 0 0);
+    --shadow-a: rgb(255 255 255 / 0.08);
+    --shadow-b: rgb(0 0 0 / 0.6);
+    --shadow-c: rgb(0 0 0 / 0.8);
+  }
+}
+
+/* The semantic tokens: the dashboard's names, from the palette above. */
+:root, .tone-dark {
+  --paper: var(--paper-v);
+  --background: var(--background-v);
+  --foreground: var(--gray-900);
+  --surface: var(--white);
+  --sunken: var(--gray-50);
+  --muted: var(--gray-100);
+  --muted-strong: var(--gray-200);
+  --line-faint: var(--gray-100);
+  --line: var(--gray-200);
+  --line-strong: var(--gray-300);
+  --fg: var(--gray-900);
+  --fg-secondary: var(--gray-700);
+  --fg-tertiary: var(--gray-600);
+  --fg-muted: var(--gray-500);
+  --fg-subtle: var(--gray-400);
+  --ink: var(--gray-900);
+  --ink-hover: var(--gray-800);
+  --on-ink: var(--white);
+  --success-soft: var(--emerald-50);
+  --success: var(--emerald-700);
+  --success-line: var(--emerald-200);
+  --warning-soft: var(--amber-50);
+  --warning: var(--amber-800);
+  --warning-line: var(--amber-200);
+  --danger-soft: var(--red-50);
+  --danger: var(--red-700);
+  --danger-line: var(--red-200);
+  --info-soft: var(--sky-50);
+  --info: var(--sky-700);
+  --info-line: var(--sky-200);
+  --link: var(--blue-600);
+  --focus: var(--blue-500);
+  --focus-soft: var(--blue-100);
+  --brand-green: var(--emerald-500);
+  --shadow-menu: 0 0 0 1px var(--shadow-a), 0 4px 8px -2px var(--shadow-b), 0 12px 24px -6px var(--shadow-b);
+  --shadow-overlay: 0 0 0 1px var(--shadow-a), 0 8px 16px -4px var(--shadow-b), 0 24px 48px -12px var(--shadow-c);
+  --shadow-raised: 0 0 0 1px var(--shadow-a), 0 1px 2px var(--shadow-b);
+}
+
+@theme inline {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-paper: var(--paper);
+  --color-background: var(--background);
+  --color-foreground: var(--fg);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-muted: var(--muted);
+  --color-muted-strong: var(--muted-strong);
+  --color-line-faint: var(--line-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-tertiary: var(--fg-tertiary);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-ink: var(--ink);
+  --color-ink-hover: var(--ink-hover);
+  --color-on-ink: var(--on-ink);
+  --color-success-soft: var(--success-soft);
+  --color-success: var(--success);
+  --color-success-line: var(--success-line);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning: var(--warning);
+  --color-warning-line: var(--warning-line);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger: var(--danger);
+  --color-danger-line: var(--danger-line);
+  --color-info-soft: var(--info-soft);
+  --color-info: var(--info);
+  --color-info-line: var(--info-line);
+  --color-link: var(--link);
+  --color-focus: var(--focus);
+  --color-focus-soft: var(--focus-soft);
+  --color-brand-green: var(--brand-green);
+
+  --shadow-menu: var(--shadow-menu);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-raised: var(--shadow-raised);
+}
+
+/* Radii and widths: the dashboard's small radii, cloudhost's columns. */
+@theme {
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --container-site: 75rem;
+  --container-prose: 42rem;
+  --container-narrow: 48rem;
+  --container-wide: 90rem;
+}
+
+@layer base {
+  *, ::before, ::after { border-color: var(--line); }
+  html {
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--paper);
+    color: var(--fg);
+    font-feature-settings: "liga" 1, "calt" 1;
+    overflow-wrap: break-word;
+  }
+  h1, h2, h3 { letter-spacing: -0.015em; }
+  a { text-underline-offset: 0.2em; }
+  ::selection { background: color-mix(in oklab, var(--link) 22%, transparent); }
+  :focus { outline: none; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+  * { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+  td, th, [data-numeric] { font-variant-numeric: tabular-nums; }
+}
+
+/* The content column: 1200px plus the gutters. */
+.container-site {
+  width: 100%;
+  max-width: calc(var(--container-site) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.container-wide {
+  width: 100%;
+  max-width: calc(var(--container-wide) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.container-narrow {
+  width: 100%;
+  max-width: calc(var(--container-narrow) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.container-prose {
+  width: 100%;
+  max-width: calc(var(--container-prose) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Type: large, tight headlines. */
+.t-display { font-weight: 600; text-wrap: balance; letter-spacing: -0.035em; line-height: 1.06; }
+.t-h1 { font-size: 2.5rem; }
+@media (min-width: 40rem) { .t-h1 { font-size: 3.75rem; } }
+@media (min-width: 64rem) { .t-h1 { font-size: 4.25rem; } }
+.t-h1c { font-size: 2.25rem; }
+@media (min-width: 40rem) { .t-h1c { font-size: 3rem; } }
+@media (min-width: 64rem) { .t-h1c { font-size: 3.5rem; } }
+.t-h2 { font-size: 2rem; }
+@media (min-width: 40rem) { .t-h2 { font-size: 2.75rem; } }
+.t-lead { font-size: 1.125rem; line-height: 1.65; color: var(--fg-muted); text-wrap: pretty; }
+@media (min-width: 40rem) { .t-lead { font-size: 1.25rem; } }
+
+/* Backdrops: decoration only, never content. */
+.bg-gridlines {
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px), linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 80%);
+}
+.bg-dots {
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1.2px);
+  background-size: 12px 12px;
+  mask-image: radial-gradient(ellipse 80% 70% at 70% 30%, #000 10%, transparent 75%);
+}
+
+/* Disclosures and menus are hidden only once the page's script has run
+ * (Page.astro adds html.js), so without JavaScript nothing is out of reach. */
+html.js [data-collapsed] { display: none; }
+html.js .nojs-only { display: none; }
+html:not(.js) .js-only { display: none; }
+
+/* Live prices (PricingCards, ComparisonTable): placeholders the size of
+ * real content while the app answers; the fallback when it does not, or
+ * without JavaScript. */
+[data-slot-off] { display: none !important; }
+.live-cards { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.live-fallback { display: none; }
+[data-state="none"] .live-fallback, html:not(.js) [data-live] .live-fallback, html:not(.js) [data-live-plans] .live-fallback { display: block; }
+[data-state="none"] .live-cards, html:not(.js) [data-live-plans] .live-cards { display: none; }
+td.live-fallback, th.live-fallback { display: none; }
+[data-state="none"] :is(td, th).live-fallback, html:not(.js) [data-live] :is(td, th).live-fallback { display: table-cell; }
+[data-state="none"] .live-cell, html:not(.js) [data-live] .live-cell { display: none; }
+[data-state="loading"] .skel {
+  color: transparent !important;
+  background: var(--muted);
+  border-radius: 0.375rem;
+  animation: skel-pulse 1.4s ease-in-out infinite;
+}
+@keyframes skel-pulse { 50% { opacity: 0.55; } }
+
+/* Product screenshots: one per theme, the other hidden. */
+.only-dark { display: none; }
+:root[data-theme="dark"] .only-dark, .tone-dark .only-dark { display: block; }
+:root[data-theme="dark"] .only-light, .tone-dark .only-light { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .only-dark { display: block; }
+  :root:not([data-theme="light"]) .only-light { display: none; }
+}
+
+/* Code from the blog's markdown: Shiki writes both themes inline; dark reads
+ * its --shiki-dark variables. */
+:root[data-theme="dark"] .astro-code, :root[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .astro-code, :root:not([data-theme="light"]) .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+/* Rendered long text: blog posts, legal pages, about.
+ *
+ * Hand-written rather than a typography plugin: the shapes are known
+ * (headings, prose, tables, fenced code, the occasional blockquote). */
+.prose {
+  color: var(--fg-muted);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+.prose > * + * { margin-top: 1.15rem; }
+.prose h1 {
+  font-size: 2.25rem;
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  color: var(--fg);
+}
+@media (min-width: 40rem) { .prose h1 { font-size: 2.75rem; } }
+.prose h1 + * { margin-top: 1.25rem; }
+.prose h2 {
+  margin-top: 2.75rem;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+.prose h3 {
+  margin-top: 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+.prose h2 + *, .prose h3 + * { margin-top: 0.75rem; }
+.prose a { color: var(--link); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--link) 40%, transparent); }
+.prose a:hover { text-decoration-color: var(--link); }
+.prose strong { color: var(--fg); font-weight: 600; }
+.prose ul, .prose ol { padding-left: 1.25rem; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose li + li { margin-top: 0.4rem; }
+.prose li::marker { color: var(--fg-subtle); }
+.prose code {
+  border-radius: 0.25rem;
+  border: 1px solid var(--line);
+  background: var(--sunken);
+  padding: 0.1rem 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--fg);
+}
+.prose pre {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+.prose pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.prose blockquote {
+  border-left: 2px solid var(--line-strong);
+  padding-left: 1rem;
+  color: var(--fg-muted);
+}
+.prose table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.prose th, .prose td {
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+.prose th { color: var(--fg); font-weight: 600; background: var(--sunken); }
+.prose hr { border-color: var(--line); }
+.prose :is(h2, h3) { position: relative; scroll-margin-top: 5rem; }
+.prose :is(h2, h3) > a.anchor {
+  position: absolute; left: -1.1rem; text-decoration: none;
+  color: var(--fg-subtle); opacity: 0; transition: opacity 0.12s;
+}
+.prose :is(h2, h3):hover > a.anchor { opacity: 1; }
+.prose td:first-child code { white-space: nowrap; }
+
+/* Reduced motion: no movement anywhere. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

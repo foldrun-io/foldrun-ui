@@ -1,0 +1,14 @@
+---
+// A list of short facts, each after a check mark.
+import Icon from "./Icon.astro";
+interface Props { items: string[]; class?: string }
+const { items, class: cls = "" } = Astro.props;
+---
+<ul class:list={["space-y-3", cls]}>
+  {items.map((b) => (
+    <li class="flex items-start gap-3">
+      <Icon name="check" class="mt-1 size-4 shrink-0 text-fg" strokeWidth={2} />
+      <span>{b}</span>
+    </li>
+  ))}
+</ul>

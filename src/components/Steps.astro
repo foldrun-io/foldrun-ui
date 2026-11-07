@@ -1,0 +1,27 @@
+---
+// The loop, one step after another, each with its command: numbered cells
+// joined by a dashed line (cloudhost's Steps).
+import Icon from "./Icon.astro";
+import StepNumber from "./StepNumber.astro";
+export interface Step { icon?: string; title: string; body: string; code?: string }
+interface Props { items: Step[] }
+const { items } = Astro.props;
+const cols = { 2: "md:grid-cols-2", 3: "md:grid-cols-3", 4: "md:grid-cols-2 lg:grid-cols-4", 5: "md:grid-cols-3 lg:grid-cols-5" }[items.length] ?? "md:grid-cols-2 lg:grid-cols-4";
+---
+<ol class:list={["grid border-l border-t bg-surface", cols]}>
+  {items.map((s, i) => (
+    <li class="flex min-w-0 flex-col gap-6 border-r border-b p-6 sm:p-8">
+      <div class="flex items-center gap-3" aria-hidden="true">
+        <StepNumber n={i + 1} />
+        {i < items.length - 1 && <span class="h-px flex-1 border-t border-dashed border-line-strong"></span>}
+      </div>
+      <div class="flex-1 space-y-2">
+        <h3 class="flex flex-wrap items-center gap-2 font-semibold">
+          {s.icon && <Icon name={s.icon} class="size-4 text-fg-muted" />}{s.title}
+        </h3>
+        <p class="text-sm leading-6 text-pretty text-fg-muted">{s.body}</p>
+      </div>
+      {s.code && <code class="block overflow-x-auto rounded-md border bg-sunken px-3 py-2 font-mono text-xs leading-5 whitespace-nowrap text-fg">{s.code}</code>}
+    </li>
+  ))}
+</ol>

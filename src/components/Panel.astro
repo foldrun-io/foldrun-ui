@@ -1,0 +1,15 @@
+---
+// A framed panel with a title bar, the way the dashboard shows a run or a
+// step: a dot or an icon, a title, the body, an optional caption under it.
+import Icon from "./Icon.astro";
+interface Props { title: string; icon?: string; dot?: boolean; mono?: boolean; caption?: string; class?: string }
+const { title, icon, dot = !icon, mono = false, caption, class: cls = "" } = Astro.props;
+---
+<figure class:list={["min-w-0 overflow-hidden rounded-xl border bg-surface", cls]}>
+  <div class:list={["flex h-10 items-center gap-2 border-b bg-sunken px-4 text-fg-muted", mono ? "font-mono text-xs" : "text-sm"]}>
+    {icon ? <Icon name={icon} class="size-4" /> : dot && <span class="size-2 rounded-full bg-brand-green" aria-hidden="true"></span>}
+    <span class="truncate">{title}</span>
+  </div>
+  <slot />
+  {caption && <figcaption class="border-t bg-sunken px-5 py-4 text-sm leading-6 text-fg-muted">{caption}</figcaption>}
+</figure>

@@ -1,0 +1,94 @@
+---
+// A table in a frame: a quiet head row, hairlines between rows, the first
+// column the row's name. A cell can carry a tone (warning: a value still to
+// confirm). Scrolls sideways on a phone rather than squeezing.
+//
+// `live`: the plans' comparison, filled at runtime from the app's catalogue
+// (src/lib/signup-client.ts) — the row labels are rendered, the columns are
+// placeholders until the answer comes. No answer or no plans: the labels
+// stay, the numbers do not, and one column says where prices are shown.
+export type CellValue = string | { text: string; tone?: "warning" | "muted" | "success" };
+export type LiveField = "price" | "credits" | "storage" | "pool" | "priority" | "seats";
+interface Props {
+  columns?: string[];
+  rows?: CellValue[][];
+  caption?: string;
+  minWidth?: string;
+  /** live: the rows, each a label and the catalogue field it shows. */
+  live?: { label: string; field: LiveField }[];
+}
+const { columns = [], rows = [], caption, minWidth = "42rem", live } = Astro.props;
+const text = (c: CellValue) => (typeof c === "string" ? c : c.text);
+const tone = (c: CellValue) => (typeof c === "string" ? undefined : c.tone);
+const SLOTS = 6;
+const VISIBLE = 4;
+---
+{live ? (
+  <div class="overflow-x-auto rounded-xl border bg-surface" data-live data-live-table data-state="loading">
+    <table class="w-full text-left text-sm" style={`min-width:${minWidth}`}>
+      {caption && <caption class="sr-only">{caption}</caption>}
+      <thead class="border-b bg-sunken text-xs text-fg-muted">
+        <tr>
+          <th scope="col" class="px-4 py-3 font-medium"><span class="sr-only">Plan</span></th>
+          {Array.from({ length: SLOTS }, (_, i) => <th scope="col" class="live-cell px-4 py-3 font-medium" data-col={i} data-slot-off={i >= VISIBLE ? "" : undefined}><span class="skel">Plan</span></th>)}
+          <th scope="col" class="live-fallback px-4 py-3 font-medium">Plans</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y align-top">
+        {live.map((r, j) => (
+          <tr data-field={r.field}>
+            <th scope="row" class="px-4 py-3 font-medium text-fg">{r.label}</th>
+            {Array.from({ length: SLOTS }, (_, i) => <td class="live-cell px-4 py-3 text-fg-muted" data-col={i} data-slot-off={i >= VISIBLE ? "" : undefined}><span class="skel">—————</span></td>)}
+            <td class="live-fallback px-4 py-3 text-fg-muted">{j === 0 ? "Shown when you sign up" : "—"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+) : (
+  <div class="overflow-x-auto rounded-xl border bg-surface">
+    <table class="w-full text-left text-sm" style={`min-width:${minWidth}`}>
+      {caption && <caption class="sr-only">{caption}</caption>}
+      <thead class="border-b bg-sunken text-xs text-fg-muted">
+        <tr>{columns.map((c) => <th scope="col" class="px-4 py-3 font-medium">{c}</th>)}</tr>
+      </thead>
+      <tbody class="divide-y align-top">
+        {rows.map((r) => (
+          <tr>
+            {r.map((c, i) => i === 0
+              ? <th scope="row" class="px-4 py-3 font-medium text-fg">{text(c)}</th>
+              : <td class:list={["px-4 py-3", tone(c) === "warning" ? "text-warning" : tone(c) === "success" ? "text-success" : "text-fg-muted"]}>{text(c)}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+<script>
+  import { whenSignup, money, per, credits, storage, pool } from "../lib/signup-client.ts";
+  for (const root of document.querySelectorAll<HTMLElement>("[data-live-table]")) {
+    whenSignup((s) => {
+      const plans = s?.plans ?? [];
+      if (!plans.length) { root.dataset.state = "none"; return; }
+      root.querySelectorAll<HTMLElement>("[data-col]").forEach((cell) => {
+        const p = plans[Number(cell.dataset.col)];
+        cell.toggleAttribute("data-slot-off", !p);
+        if (!p) return;
+        const field = cell.closest("tr")?.dataset.field;
+        const m = money(p.price);
+        const value =
+          cell.tagName === "TH" ? p.name
+          : field === "price" ? (m ? [m, per(p.price)].filter(Boolean).join(" ") : "—")
+          : field === "credits" ? (p.credits === null ? "—" : (credits(p.credits) ?? "—").replace(" credits", ""))
+          : field === "storage" ? storage(p.storageGb) ?? "—"
+          : field === "pool" ? pool(p) ?? "—"
+          : field === "priority" ? (p.priority ? "Yes" : "—")
+          : field === "seats" ? "Unlimited"
+          : "—";
+        cell.textContent = value;
+      });
+      root.dataset.state = "ready";
+    });
+  }
+</script>

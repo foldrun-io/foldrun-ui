@@ -1,0 +1,17 @@
+---
+// The closing call to action: centred over grid lines.
+import ButtonRow, { type Cta } from "./ButtonRow.astro";
+interface Props { title: string; body?: string; ctas?: Cta[]; note?: string }
+const { title, body, ctas = [], note } = Astro.props;
+---
+<section class="relative overflow-hidden border-t py-24 sm:py-32">
+  <div aria-hidden="true" class="bg-gridlines pointer-events-none absolute inset-0 opacity-70 [mask-image:radial-gradient(ellipse_60%_70%_at_50%_50%,#000_20%,transparent_75%)]"></div>
+  <div class="container-site relative flex flex-col items-center gap-8 text-center">
+    <div class="max-w-3xl space-y-4">
+      <h2 class="t-display t-h2">{title}</h2>
+      {body && <p class="t-lead mx-auto max-w-2xl">{body}</p>}
+    </div>
+    <ButtonRow ctas={ctas} center class="w-full min-[420px]:w-auto" />
+    {note && <p class="text-sm text-fg-muted" set:html={note} />}
+  </div>
+</section>

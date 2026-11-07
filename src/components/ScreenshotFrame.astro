@@ -1,0 +1,35 @@
+---
+// A product screenshot in a browser window: three dots, the address the
+// page lives at, then the picture. Two images, one per theme; the other is
+// hidden by CSS (.only-light / .only-dark). Images are WebP, 1920×1200,
+// taken from the dashboard at 1440×900 and 2×.
+interface Props {
+  name: string;       // <base>/<name>.webp and <base>/<name>-dark.webp
+  /** Where the site keeps its screenshots (public/…). */
+  base?: string;
+  /** The images' size, for the browser to reserve the space. */
+  width?: number;
+  height?: number;
+  alt: string;
+  url?: string;       // shown in the address bar
+  eager?: boolean;    // the hero's image: load at once
+  class?: string;
+}
+const { name, base = "/images/product", width = 1920, height = 1200, alt, url = "app.foldrun.io", eager = false, class: cls = "" } = Astro.props;
+const loading = eager ? "eager" : "lazy";
+const fp = eager ? "high" : "auto";
+---
+<figure class:list={["min-w-0 overflow-hidden rounded-xl border bg-surface shadow-overlay", cls]}>
+  <div class="flex h-9 items-center gap-3 border-b bg-sunken px-3 sm:h-10">
+    <span class="flex shrink-0 items-center gap-1.5" aria-hidden="true">
+      <span class="size-2.5 rounded-full bg-line-strong"></span>
+      <span class="size-2.5 rounded-full bg-line-strong"></span>
+      <span class="size-2.5 rounded-full bg-line-strong"></span>
+    </span>
+    <span class="mx-auto block h-6 min-w-0 max-w-sm flex-1 truncate rounded-md border bg-surface px-3 text-center font-mono text-[11px] leading-[22px] text-fg-muted">{url}</span>
+    <span class="w-[42px] shrink-0" aria-hidden="true"></span>
+  </div>
+  <img src={`${base}/${name}.webp`} alt={alt} width={width} height={height} loading={loading} fetchpriority={fp} decoding="async" class="only-light block h-auto w-full" />
+  <img src={`${base}/${name}-dark.webp`} alt={alt} width={width} height={height} loading="lazy" decoding="async" class="only-dark h-auto w-full" />
+  <slot />
+</figure>

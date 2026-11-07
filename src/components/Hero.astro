@@ -1,0 +1,52 @@
+---
+// The top of a page. Two layouts, both cloudhost's:
+//   split (every inner page): an eyebrow, a large headline, its lead beside
+//     it on wide screens, the calls to action under the headline, over dots;
+//   center (the home page): a pill, the headline, the lead, the calls to
+//     action and the product in a window, centred over grid lines.
+// compact is for reading pages. Slots: "pill" (center), "under-title",
+// "title" (a headline that needs markup, e.g. the status dot), default
+// (under everything: the screenshot on the home page).
+import ButtonRow, { type Cta } from "./ButtonRow.astro";
+interface Props {
+  variant?: "split" | "center";
+  eyebrow?: string;
+  eyebrowHref?: string;
+  title?: string;
+  titleId?: string;
+  lead?: string;
+  ctas?: Cta[];
+  compact?: boolean;
+}
+const { variant = "split", eyebrow, eyebrowHref, title, titleId, lead, ctas = [], compact = false } = Astro.props;
+const custom = Astro.slots.has("title");
+---
+{variant === "center" ? (
+  <section class="relative overflow-hidden border-b">
+    <div aria-hidden="true" class="bg-gridlines pointer-events-none absolute inset-0 opacity-80"></div>
+    <div class="container-site relative pt-16 pb-14 text-center sm:pt-24 lg:pt-28">
+      <slot name="pill" />
+      <h1 id={titleId} class="t-display t-h1 mx-auto mt-7 max-w-4xl">{custom ? <slot name="title" /> : title}</h1>
+      {lead && <p class="t-lead mx-auto mt-6 max-w-2xl">{lead}</p>}
+      <ButtonRow ctas={ctas} center class="mt-9" />
+      <slot name="under-title" />
+      <slot />
+    </div>
+  </section>
+) : (
+  <section class="relative overflow-hidden border-b">
+    <div aria-hidden="true" class="bg-dots pointer-events-none absolute inset-0"></div>
+    <div class:list={["container-site relative grid gap-x-16 gap-y-6 lg:grid-cols-2", compact ? "py-14 sm:py-20" : "py-16 sm:py-24 lg:py-28"]}>
+      <div class="min-w-0 space-y-6 lg:col-start-1 lg:row-start-1">
+        {eyebrow && (eyebrowHref
+          ? <a href={eyebrowHref} class="inline-flex text-sm font-medium text-fg-muted transition-colors hover:text-fg">{eyebrow}</a>
+          : <p class="text-sm font-medium text-fg-muted">{eyebrow}</p>)}
+        <h1 id={titleId} class:list={["t-display", compact ? "t-h1c" : "t-h1"]}>{custom ? <slot name="title" /> : title}</h1>
+        <slot name="under-title" />
+      </div>
+      {lead && <p class="t-lead max-w-xl lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-end lg:pb-1">{lead}</p>}
+      {ctas.length > 0 && <ButtonRow ctas={ctas} class="pt-2 lg:col-start-1 lg:row-start-2" />}
+      <slot />
+    </div>
+  </section>
+)}

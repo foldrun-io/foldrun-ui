@@ -1,0 +1,38 @@
+---
+// Cells divided by hairlines (cloudhost's FeatureGrid): borders on the start
+// and top of the grid, on the end and bottom of each cell. A cell with an
+// href is a link with an arrow. The default slot of a cell is not used; a
+// cell can also carry a short bulleted list (`points`).
+import Icon from "./Icon.astro";
+export interface Cell { icon?: string; title: string; body?: string; href?: string; meta?: string; points?: string[] }
+interface Props { items: Cell[]; columns?: 2 | 3 | 4 | 5; class?: string; headingLevel?: "h2" | "h3" }
+const { items, columns = 3, class: cls = "", headingLevel = "h3" } = Astro.props;
+const cols = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-2 lg:grid-cols-3", 4: "sm:grid-cols-2 lg:grid-cols-4", 5: "sm:grid-cols-2 lg:grid-cols-5" }[columns];
+const H = headingLevel;
+const ext = (h: string) => /^(https?:|mailto:)/.test(h);
+---
+<ul class:list={["grid border-l border-t bg-surface", cols, cls]}>
+  {items.map((it) => {
+    const inner = (
+      <Fragment>
+        {(it.icon || it.href) && <div class="flex items-start justify-between gap-3">
+          {it.icon ? <Icon name={it.icon} class="size-5 text-fg" /> : <span />}
+          {it.href && <Icon name="arrow-up-right" class:list={["size-4 shrink-0 text-fg-muted transition-transform group-hover:text-fg", !ext(it.href) && "group-hover:translate-x-0.5"]} />}
+        </div>}
+        <div class="space-y-2">
+          <H class="font-semibold">{it.title}</H>
+          {it.body && <p class="text-sm leading-6 text-pretty text-fg-muted">{it.body}</p>}
+          {it.meta && <p class="pt-1 font-mono text-xs text-fg-muted">{it.meta}</p>}
+          {it.points && <ul class="list-disc space-y-2 pt-1 pl-5 text-sm leading-6 text-fg-muted marker:text-fg-subtle">{it.points.map((x) => <li>{x}</li>)}</ul>}
+        </div>
+      </Fragment>
+    );
+    return (
+      <li class="min-w-0 border-r border-b">
+        {it.href
+          ? <a href={it.href} class="group flex h-full flex-col gap-8 p-6 transition-colors hover:bg-sunken sm:p-8">{inner}</a>
+          : <div class="flex h-full flex-col gap-8 p-6 sm:p-8">{inner}</div>}
+      </li>
+    );
+  })}
+</ul>

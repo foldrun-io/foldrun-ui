@@ -1,0 +1,7 @@
+---
+// Long text in a reading column, styled by .prose in global.css: legal
+// pages, about, blog posts.
+interface Props { class?: string; size?: "base" | "lg" }
+const { class: cls = "", size = "base" } = Astro.props;
+---
+<div class:list={["prose", size === "lg" && "text-lg", cls]}><slot /></div>

@@ -1,0 +1,30 @@
+---
+// The theme switch: system, light, dark. The choice lives in this browser
+// only (localStorage "theme"); "system" removes it and the page follows
+// prefers-color-scheme again. BaseLayout applies a saved choice before the
+// first paint.
+import Icon from "./Icon.astro";
+const CHOICES = [
+  { id: "system", label: "Use the system theme", icon: "monitor" },
+  { id: "light", label: "Use the light theme", icon: "sun" },
+  { id: "dark", label: "Use the dark theme", icon: "moon" },
+];
+---
+<div role="group" aria-label="Theme" class="inline-flex items-center gap-0.5 rounded-full border bg-surface p-0.5" data-theme-switch>
+  {CHOICES.map((c) => (
+    <button type="button" data-theme-choice={c.id} aria-label={c.label} aria-pressed={c.id === "system" ? "true" : "false"} class="grid size-7 place-items-center rounded-full text-fg-muted transition-colors hover:text-fg aria-pressed:bg-muted aria-pressed:text-fg"><Icon name={c.icon} class="size-3.5" /></button>
+  ))}
+</div>
+
+<script>
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll<HTMLButtonElement>("[data-theme-choice]");
+  const show = (choice: string) => buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeChoice === choice)));
+  show(root.getAttribute("data-theme") || "system");
+  buttons.forEach((b) => b.addEventListener("click", () => {
+    const choice = b.dataset.themeChoice ?? "system";
+    if (choice === "system") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", choice);
+    try { if (choice === "system") localStorage.removeItem("theme"); else localStorage.setItem("theme", choice); } catch { /* storage off */ }
+    show(choice);
+  }));
+</script>

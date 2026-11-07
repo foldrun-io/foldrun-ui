@@ -1,0 +1,13 @@
+---
+// Calls to action side by side: the first primary, the rest outline. On a
+// phone they stack full width.
+import Button from "./Button.astro";
+export interface Cta { href: string; label: string; signup?: string }
+interface Props { ctas: Cta[]; center?: boolean; class?: string }
+const { ctas, center = false, class: cls = "" } = Astro.props;
+---
+{ctas.length > 0 && (
+  <div class:list={["flex flex-col gap-3 min-[420px]:flex-row min-[420px]:flex-wrap min-[420px]:items-center", center && "min-[420px]:justify-center", cls]}>
+    {ctas.map((c, i) => <Button href={c.href} signup={c.signup} variant={i ? "outline" : "primary"} class="max-[419px]:w-full">{c.label}</Button>)}
+  </div>
+)}

@@ -1,0 +1,10 @@
+---
+// A framed panel over a field of dots, to set a small piece of product
+// (a run trace, a file) on: cloudhost's media frame.
+interface Props { class?: string }
+const { class: cls = "" } = Astro.props;
+---
+<div class:list={["relative overflow-hidden rounded-xl border bg-surface p-6 sm:p-10", cls]}>
+  <div aria-hidden="true" class="bg-dots pointer-events-none absolute inset-0 opacity-70"></div>
+  <div class="relative"><slot /></div>
+</div>

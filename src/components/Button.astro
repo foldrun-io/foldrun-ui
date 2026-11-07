@@ -1,0 +1,56 @@
+---
+// Every button on the site is this: a link styled as a button (the site
+// has no forms, so every action goes somewhere). Page calls to action are
+// pills; the header's are small rounded buttons. primary is ink, outline a
+// surface with a hairline, ghost text that fills on hover.
+//
+// Sign-up awareness: a button marked `signup` ("primary" for the main call
+// to action, "free" for the Free plan's card, "plan:<id>" for a paid plan's)
+// follows the app's answer to "is sign-up open?" — GET <app>/api/signup →
+// { free, paid, plans }, two switches the operator controls, asked once per
+// page by src/lib/signup-client.ts (the layout names the endpoint):
+//   free open                → as rendered ("Get started" → /signup)
+//   free closed, paid open   → "Choose a plan" → /pricing/ (paid plan cards
+//                              keep /signup?plan=<id>; the Free card asks
+//                              for access)
+//   both closed              → "Request access" → /signup (the app's page
+//                              shows the request form)
+//   no answer                → as rendered: the app's page tells the truth.
+// The server renders the open state, so nothing moves unless it must.
+interface Props {
+  href: string;
+  variant?: "primary" | "outline" | "ghost";
+  size?: "sm" | "md" | "lg";
+  shape?: "pill" | "rounded";
+  block?: boolean;
+  /** Follow the app's sign-up switches: "primary", "free" or "plan:<id>". */
+  signup?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+const { href, variant = "primary", size = "lg", shape = size === "sm" ? "rounded" : "pill", block = false, signup, class: cls = "", ...rest } = Astro.props;
+---
+<a
+  href={href}
+  class:list={[
+    "inline-flex shrink-0 items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors",
+    size === "lg" && "h-11 px-5 text-[0.9375rem]",
+    size === "md" && "h-10 px-4 text-sm",
+    size === "sm" && "h-8 px-3 text-sm",
+    shape === "pill" ? "rounded-full" : "rounded-md",
+    variant === "primary" && "bg-ink text-on-ink hover:bg-ink-hover",
+    variant === "outline" && "border bg-surface text-fg hover:bg-muted",
+    variant === "ghost" && "text-fg-muted hover:bg-muted hover:text-fg",
+    block && "w-full",
+    cls,
+  ]}
+  data-signup={signup}
+  {...rest}
+><slot /></a>
+
+<script>
+  // One question to the app per page (src/lib/signup-client.ts); the
+  // buttons marked data-signup follow its answer.
+  import { startSignup } from "../lib/signup-client.ts";
+  if (document.querySelector("a[data-signup]")) startSignup();
+</script>

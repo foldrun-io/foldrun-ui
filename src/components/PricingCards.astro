@@ -1,0 +1,107 @@
+---
+// Plans side by side in one frame, divided by hairlines (cloudhost's
+// PlanCards). The highlighted plan sits on the surface with a primary
+// button; the rest on the paper with outline ones.
+//
+// Two kinds. Static plans (Local, a custom deal) arrive as words. `live`
+// plans come from the app at runtime — GET <app>/api/signup, asked once per
+// page by src/lib/signup-client.ts — so the site never shows a price the app
+// does not charge. Live cards render as placeholders the size of real ones
+// (no layout shift), are filled when the answer comes, and give way to
+// "Prices are shown when you sign up" when there is no answer or no plans.
+// Without JavaScript that fallback is what shows.
+import PlanCard, { type Plan } from "./PlanCard.astro";
+import Callout from "./Callout.astro";
+import Button from "./Button.astro";
+export type { Plan } from "./PlanCard.astro";
+interface Props {
+  plans?: Plan[];
+  live?: boolean;
+  /** live: a line (and a note) per catalogue plan id. */
+  words?: Record<string, { pitch?: string; note?: string }>;
+  /** live: the plan id set apart, when the catalogue has it. */
+  highlight?: string;
+  /** live: the app's sign-up page, for the placeholders and the fallback. */
+  signupUrl?: string;
+  columns?: 2 | 3 | 4;
+  compact?: boolean;
+  id?: string;
+}
+const { plans = [], live = false, words = {}, highlight = "", signupUrl = "#", columns = (plans.length || 4) as 2 | 3 | 4, compact = false, id } = Astro.props;
+const grid = { 2: "md:grid-cols-2", 3: "lg:grid-cols-3", 4: "md:grid-cols-2 xl:grid-cols-4" }[columns];
+const SLOTS = 6;   // the most plans a page shows; four placeholders are visible while loading
+const VISIBLE = 4;
+---
+{live ? (
+  <div id={id} class="scroll-mt-24" data-live-plans data-state="loading" aria-busy="true" data-words={JSON.stringify(words)} data-highlight={highlight}>
+    <p class="sr-only" role="status" data-live-status>Loading prices…</p>
+    <ul class="live-cards grid gap-px overflow-hidden rounded-xl border bg-line">
+      {Array.from({ length: SLOTS }, (_, i) => <PlanCard live compact={compact} index={i} off={i >= VISIBLE} signupUrl={signupUrl} />)}
+    </ul>
+    <div class="live-fallback">
+      <Callout title="Prices are shown when you sign up" icon="receipt">
+        <p>The plans and their prices come from the app, so they are always the ones it charges.</p>
+        <div class="mt-4"><Button href={signupUrl} signup="primary" size="md">Get started</Button></div>
+      </Callout>
+    </div>
+  </div>
+) : (
+  <ul id={id} class:list={["grid scroll-mt-24 gap-px overflow-hidden rounded-xl border bg-line", grid]}>
+    {plans.map((p) => <PlanCard plan={p} compact={compact} />)}
+  </ul>
+)}
+
+<script>
+  import { whenSignup, money, per, credits, storage, isFree, signupUrl, type CatalogPlan } from "../lib/signup-client.ts";
+
+  const text = (el: Element | null, value: string | null) => {
+    if (!el) return;
+    const target = el.querySelector("[data-text]") ?? el;
+    if (value === null) { el.setAttribute("hidden", ""); return; }
+    el.removeAttribute("hidden");
+    target.textContent = value;
+  };
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-live-plans]")) {
+    const words: Record<string, { pitch?: string; note?: string }> = JSON.parse(root.dataset.words || "{}");
+    const highlight = root.dataset.highlight;
+    whenSignup((s) => {
+      const plans: CatalogPlan[] = s?.plans ?? [];
+      const status = root.querySelector("[data-live-status]");
+      root.removeAttribute("aria-busy");
+      if (!plans.length) {
+        root.dataset.state = "none";
+        if (status) status.textContent = "Prices are shown when you sign up.";
+        return;
+      }
+      const base = signupUrl();
+      const hasHighlight = plans.some((p) => p.id === highlight);
+      root.querySelectorAll<HTMLElement>("[data-slot]").forEach((el, i) => {
+        const p = plans[i];
+        el.toggleAttribute("data-slot-off", !p);
+        if (!p) return;
+        const q = (f: string) => el.querySelector(`[data-f="${f}"]`);
+        text(q("name"), p.name);
+        const m = money(p.price);
+        text(q("price"), m);
+        text(q("unit"), m ? per(p.price) || null : null);
+        if (!m) q("price-row")?.setAttribute("hidden", "");
+        text(q("pitch"), words[p.id]?.pitch ?? null);
+        const c = credits(p.credits);
+        text(q("credits"), c && (p.price?.interval === "month" ? `${c} every month` : c));
+        const st = storage(p.storageGb);
+        text(q("storage"), st && `${st} of storage included`);
+        text(q("pool"), p.vcpu !== null && p.memoryGiB !== null ? `Compute pool: ${p.vcpu} vCPU and ${p.memoryGiB} GiB at once` : null);
+        text(q("priority"), p.priority ? "High-priority lane" : null);
+        text(q("note"), words[p.id]?.note ?? null);
+        el.toggleAttribute("data-hi", hasHighlight && p.id === highlight);
+        for (const b of el.querySelectorAll<HTMLAnchorElement>('[data-f="cta"]')) {
+          if (isFree(p)) { b.dataset.signup = "free"; b.href = base; b.textContent = "Get started"; }
+          else { b.dataset.signup = `plan:${p.id}`; b.href = `${base}?plan=${encodeURIComponent(p.id)}`; b.textContent = `Start with ${p.name}`; }
+        }
+      });
+      root.dataset.state = "ready";
+      if (status) status.textContent = `${plans.length} plans.`;
+    });
+  }
+</script>

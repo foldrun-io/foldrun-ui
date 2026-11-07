@@ -1,0 +1,23 @@
+---
+// Questions: the title beside a list of disclosures (our own, not
+// <details>). The page passes the same items to Page's `structured` as an
+// FAQPage so search engines read them too.
+import Icon from "./Icon.astro";
+import Disclosure from "./Disclosure.astro";
+interface Props { title?: string; items: [string, string][]; /** Unique on the page when it has more than one Faq. */ id?: string }
+const { title = "Questions", items, id = `faq-${Math.random().toString(36).slice(2, 8)}` } = Astro.props;
+---
+<div class="container-site grid gap-10 lg:grid-cols-12 lg:gap-16">
+  <h2 class="t-display t-h2 lg:sticky lg:top-24 lg:col-span-4 lg:self-start">{title}</h2>
+  <div class="divide-y border-y lg:col-span-8">
+    {items.map(([q, a], i) => (
+      <Disclosure id={`${id}-${i}`} buttonClass="py-5 text-base font-medium transition-colors hover:text-fg-muted sm:text-lg">
+        <Fragment slot="summary">
+          <span>{q}</span>
+          <Icon name="plus" class="size-5 shrink-0 text-fg-muted transition-transform group-aria-expanded:rotate-45" />
+        </Fragment>
+        <p class="max-w-2xl pb-6 leading-7 text-pretty text-fg-muted">{a}</p>
+      </Disclosure>
+    ))}
+  </div>
+</div>

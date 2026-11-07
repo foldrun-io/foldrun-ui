@@ -1,0 +1,10 @@
+---
+// An icon in a small bordered tile: the mark at the top of a card, a menu
+// item, a section's family. size md is 36px, lg 44px.
+import Icon from "./Icon.astro";
+interface Props { name: string; size?: "md" | "lg"; raised?: boolean; class?: string }
+const { name, size = "lg", raised = size === "lg", class: cls = "" } = Astro.props;
+---
+<span class:list={["grid shrink-0 place-items-center border bg-surface", size === "lg" ? "size-11 rounded-xl" : "size-9 rounded-lg", raised && "shadow-raised", cls]}>
+  <Icon name={name} class={size === "lg" ? "size-5" : "size-4"} />
+</span>

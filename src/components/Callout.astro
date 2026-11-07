@@ -1,0 +1,17 @@
+---
+// A framed note: neutral (a default, a safe harbour), warning (a draft),
+// danger (the platform cannot be reached). The status page fills one by id.
+import Icon from "./Icon.astro";
+interface Props { tone?: "neutral" | "warning" | "danger"; title?: string; icon?: string; id?: string; hidden?: boolean; role?: "note" | "alert" | "status"; class?: string }
+const { tone = "neutral", title, icon, id, hidden, role, class: cls = "" } = Astro.props;
+---
+<div id={id} hidden={hidden} role={role} class:list={[
+  "rounded-xl border p-5 sm:p-6",
+  tone === "neutral" && "bg-surface",
+  tone === "warning" && "border-warning-line bg-warning-soft text-warning",
+  tone === "danger" && "border-danger-line bg-danger-soft text-danger",
+  cls,
+]}>
+  {title && <p class="flex items-center gap-2 font-semibold">{icon && <Icon name={icon} class="size-4" />}{title}</p>}
+  <div class:list={["text-sm leading-6", title && "mt-2", tone === "neutral" && "text-fg-muted"]}><slot /></div>
+</div>

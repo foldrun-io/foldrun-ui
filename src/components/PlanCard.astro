@@ -1,0 +1,69 @@
+---
+// One plan in PricingCards: name, price, a line, the facts, the button.
+// A static plan (Local, a custom deal) arrives with its words; a live slot
+// arrives with placeholders sized like real content and data-f markers that
+// PricingCards' script fills from the app's catalogue.
+import Button from "./Button.astro";
+import Icon from "./Icon.astro";
+export interface Plan {
+  name: string;
+  price: string;
+  unit?: string;
+  pitch?: string;
+  bullets?: string[];
+  note?: string;
+  cta: { href: string; label: string; mono?: boolean; signup?: string };
+  highlight?: boolean;
+  aside?: string;
+}
+interface Props { plan?: Plan; live?: boolean; compact?: boolean; index?: number; off?: boolean; signupUrl?: string }
+const { plan, live = false, compact = false, index, off = false, signupUrl = "#" } = Astro.props;
+// A live slot's placeholders: the shape of a real card, never a number.
+// Filler the length of real text (no digits, so nothing reads as a price).
+const p: Plan = plan ?? { name: "Plan name", price: "———", unit: "per month", pitch: "A line about who the plan is for.", cta: { href: signupUrl, label: "Start with a plan", signup: "plan:pending" } };
+const LIVE_BULLETS: [string, string][] = [
+  ["credits", "······ credits every month"],
+  ["storage", "··· GB of storage included"],
+  ["pool", "Compute pool: ·· vCPU and ·· GiB at once"],
+  ["priority", "High-priority lane"],
+];
+const f = (name: string) => (live ? { "data-f": name } : {});
+const skel = live ? "skel" : "";
+---
+<li data-slot={index} data-slot-off={off ? "" : undefined} data-hi={!live && p.highlight ? "" : undefined}
+  class:list={["group flex min-w-0 flex-col bg-paper p-6 data-hi:bg-surface sm:p-8", compact ? "gap-4" : "gap-8"]}>
+  <div class:list={[compact ? "space-y-4" : "space-y-5"]}>
+    <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+      <h3 class:list={["font-medium", skel]} {...f("name")}>{p.name}</h3>
+      {p.aside && <p class="text-sm text-fg-muted">{p.aside}</p>}
+    </div>
+    {(p.price || live) && (
+      <p class="flex flex-wrap items-baseline gap-x-2 gap-y-1" {...f("price-row")}>
+        <span class:list={["text-4xl font-semibold tracking-[-0.03em] tabular-nums sm:text-5xl", skel]} {...f("price")}>{p.price}</span>
+        {(p.unit || live) && <span class:list={["text-sm text-fg-muted", skel]} {...f("unit")}>{p.unit}</span>}
+      </p>
+    )}
+    {(p.pitch || live) && <p class:list={["text-fg-muted", skel]} {...f("pitch")}>{p.pitch}</p>}
+  </div>
+  {!compact && (live || (p.bullets && p.bullets.length > 0)) && (
+    <ul class="flex-1 space-y-3 border-t pt-6 text-sm">
+      {live
+        ? LIVE_BULLETS.map(([b, filler]) => <li class="flex gap-3" {...f(b)}><Icon name="check" class="mt-0.5 size-4 shrink-0" strokeWidth={2} /><span class="skel" data-text>{filler}</span></li>)
+        : p.bullets!.map((b) => <li class="flex gap-3"><Icon name="check" class="mt-0.5 size-4 shrink-0" strokeWidth={2} /><span>{b}</span></li>)}
+      {live && <li class="flex gap-3"><Icon name="check" class="mt-0.5 size-4 shrink-0" strokeWidth={2} /><span>Unlimited seats</span></li>}
+      {(p.note || live) && <li class="flex gap-3 text-fg-muted" {...f("note")}><Icon name="refresh-cw" class="mt-0.5 size-4 shrink-0" /><span data-text>{p.note}</span></li>}
+    </ul>
+  )}
+  <div class="mt-auto pt-2">
+    {live ? (
+      <Fragment>
+        <div class="group-data-hi:hidden"><Button href={p.cta.href} signup={p.cta.signup} variant="outline" size="md" block={!compact} data-f="cta"><span class="skel">{p.cta.label}</span></Button></div>
+        <div class="hidden group-data-hi:block"><Button href={p.cta.href} signup={p.cta.signup} size="md" block={!compact} data-f="cta"><span class="skel">{p.cta.label}</span></Button></div>
+      </Fragment>
+    ) : (
+      <Button href={p.cta.href} signup={p.cta.signup} variant={p.highlight ? "primary" : "outline"} size="md" block={!compact}>
+        {p.cta.mono ? <span class="font-mono text-[13px]">{p.cta.label}</span> : p.cta.label}
+      </Button>
+    )}
+  </div>
+</li>

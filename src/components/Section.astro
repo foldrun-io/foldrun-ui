@@ -1,0 +1,37 @@
+---
+// A band of the page, with the content column inside it. tone "dark" is
+// dark in both themes (the bands that break a long page); "raised" sits on
+// the surface between hairlines. width picks the column: the site's 1200px,
+// a reading column, a narrow one, or none (the caller lays out its own).
+interface Props {
+  id?: string;
+  tone?: "default" | "dark" | "raised";
+  size?: "default" | "compact" | "flush";
+  width?: "site" | "prose" | "narrow" | "none";
+  divider?: boolean;
+  class?: string;
+  innerClass?: string;
+  label?: string;
+  labelledby?: string;
+}
+const { id, tone = "default", size = "default", width = "site", divider = false, class: cls = "", innerClass = "", label, labelledby } = Astro.props;
+---
+<section
+  id={id}
+  aria-label={label}
+  aria-labelledby={labelledby}
+  class:list={[
+    "relative scroll-mt-20",
+    size === "compact" && "py-12 sm:py-16",
+    size === "default" && "py-20 sm:py-28",
+    size === "flush" && "pb-20 sm:pb-28",
+    divider && "border-t",
+    tone === "dark" && "tone-dark border-y bg-paper text-fg",
+    tone === "raised" && "border-y bg-surface",
+    cls,
+  ]}
+>
+  {width === "none"
+    ? <slot />
+    : <div class:list={[width === "site" ? "container-site" : width === "prose" ? "container-prose" : "container-narrow", innerClass]}><slot /></div>}
+</section>

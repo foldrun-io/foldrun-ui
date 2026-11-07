@@ -1,0 +1,62 @@
+---
+// Screenshots of the dashboard behind tabs: one window, a row of tabs above
+// it, a line under it saying what the screen is for. Without JavaScript all
+// of them show, one under the other.
+import ScreenshotFrame from "./ScreenshotFrame.astro";
+export interface Shot { id: string; label: string; name: string; url: string; alt: string; caption: string }
+interface Props { shots: Shot[]; /** Unique on the page when it has more than one tour. */ id?: string }
+const { shots, id = `tour-${Math.random().toString(36).slice(2, 8)}` } = Astro.props;
+---
+<div data-tour>
+  <div role="tablist" aria-label="Dashboard screens" class="mb-6 hidden flex-wrap gap-1 rounded-full border bg-surface p-1 sm:inline-flex" data-tour-tabs>
+    {shots.map((s, i) => (
+      <button type="button" role="tab" id={`${id}-t-${s.id}`} aria-controls={`${id}-p-${s.id}`} aria-selected={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1} data-tour-tab={s.id}
+        class="h-8 rounded-full px-3.5 text-sm text-fg-muted transition-colors hover:text-fg aria-selected:bg-ink aria-selected:text-on-ink">
+        {s.label}
+      </button>
+    ))}
+  </div>
+  <div class="space-y-10" data-tour-panels>
+    {shots.map((s) => (
+      <div role="tabpanel" id={`${id}-p-${s.id}`} aria-labelledby={`${id}-t-${s.id}`} data-tour-panel={s.id} class="space-y-4">
+        <ScreenshotFrame name={s.name} url={s.url} alt={s.alt} />
+        <p class="max-w-2xl text-sm text-fg-muted"><span class="font-medium text-fg">{s.label}.</span> {s.caption}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  // On a phone the tabs would wrap into a block: there, every screen stays
+  // stacked. From 640px up, one at a time. Each tour on the page on its own.
+  const wide = matchMedia("(min-width: 640px)");
+  for (const tour of document.querySelectorAll<HTMLElement>("[data-tour]")) {
+    const tabs = [...tour.querySelectorAll<HTMLButtonElement>("[data-tour-tab]")];
+    const panels = [...tour.querySelectorAll<HTMLElement>("[data-tour-panel]")];
+    let current = tabs[0]?.dataset.tourTab;
+    const apply = (focus = false) => {
+      for (const t of tabs) {
+        const on = t.dataset.tourTab === current;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      }
+      for (const p of panels) {
+        p.hidden = wide.matches && p.dataset.tourPanel !== current;
+        p.setAttribute("role", wide.matches ? "tabpanel" : "group");
+      }
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => { current = t.dataset.tourTab; apply(); });
+      t.addEventListener("keydown", (e) => {
+        const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        current = tabs[(i + d + tabs.length) % tabs.length].dataset.tourTab;
+        apply(true);
+      });
+    });
+    wide.addEventListener("change", () => apply());
+    apply();
+  }
+</script>

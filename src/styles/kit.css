@@ -10,3 +10,4 @@
 @import "tw-animate-css";
 @import "./tokens.css";
 @source "../react";
+@source "../recipes";

@@ -16,6 +16,8 @@ interface Props {
   class?: string;
   [key: string]: unknown;
 }
+import { inputBase } from "../recipes/input.ts";
+import { cn } from "../react/cn.ts";
 const { id, label, aside, type = "text", hint, ltr = false, class: cls = "", ...rest } = Astro.props;
 const hasHint = hint || Astro.slots.has("hint");
 ---
@@ -26,7 +28,7 @@ const hasHint = hint || Astro.slots.has("hint");
     type={type}
     dir={ltr ? "ltr" : undefined}
     aria-describedby={hasHint ? `${id}-hint` : undefined}
-    class="block h-11 w-full rounded-lg border bg-surface px-3 text-base text-fg transition-colors placeholder:text-fg-subtle hover:border-line-strong focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-soft"
+    class={cn(inputBase, "block h-11 rounded-lg text-base")}
     {...rest}
   />
   {hasHint && <p id={`${id}-hint`} class="text-sm text-fg-muted"><slot name="hint">{hint}</slot></p>}

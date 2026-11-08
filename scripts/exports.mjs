@@ -11,18 +11,21 @@ import path from "node:path";
 const root = path.join(path.dirname(new URL(import.meta.url).pathname), "..");
 const pkgPath = path.join(root, "package.json");
 
+// The React kit (src/react) and the framework-neutral recipes both sides read
+// (src/recipes), one export per file.
+const DIRS = ["react", "recipes"];
+
 export function reactExports() {
-  const dir = path.join(root, "src/react");
-  return Object.fromEntries(
-    fs.readdirSync(dir)
-      .filter((f) => /\.tsx?$/.test(f))
-      .sort()
-      .map((f) => [`./react/${f.replace(/\.tsx?$/, "")}`, `./src/react/${f}`]),
-  );
+  const out = {};
+  for (const d of DIRS) {
+    const dir = path.join(root, "src", d);
+    for (const f of fs.readdirSync(dir).filter((f) => /\.tsx?$/.test(f)).sort()) out[`./${d}/${f.replace(/\.tsx?$/, "")}`] = `./src/${d}/${f}`;
+  }
+  return out;
 }
 
 export function render(pkg) {
-  const rest = Object.fromEntries(Object.entries(pkg.exports).filter(([k]) => !k.startsWith("./react/")));
+  const rest = Object.fromEntries(Object.entries(pkg.exports).filter(([k]) => !DIRS.some((d) => k.startsWith(`./${d}/`))));
   return { ...pkg, exports: { ...rest, ...reactExports() } };
 }
 

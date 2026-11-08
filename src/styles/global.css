@@ -5,6 +5,7 @@
 @source "../components";
 @source "../layouts";
 @source "../lib";
+@source "../recipes";
 
 /* The look (Nov 2026 redesign): the same family as the dashboard and as
  * cloudhost's marketing site. A #fafafa page with white cards (black and

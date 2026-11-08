@@ -1,6 +1,6 @@
 {
   "name": "@foldrun/ui",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "foldrun's one component set and design tokens: the React kit the dashboard and the operator console are drawn with, and the Astro components foldrun.io, foldrun.ir and docs.foldrun.io are built from. Source, not a build.",
   "type": "module",
   "license": "FSL-1.1-ALv2",
@@ -60,7 +60,10 @@
     "./react/table": "./src/react/table.tsx",
     "./react/time-field": "./src/react/time-field.tsx",
     "./react/toast": "./src/react/toast.tsx",
-    "./react/tooltip": "./src/react/tooltip.tsx"
+    "./react/tooltip": "./src/react/tooltip.tsx",
+    "./recipes/button": "./src/recipes/button.ts",
+    "./recipes/input": "./src/recipes/input.ts",
+    "./recipes/mark": "./src/recipes/mark.ts"
   },
   "bin": {
     "foldrun-ui-check-native": "scripts/check-native.mjs",

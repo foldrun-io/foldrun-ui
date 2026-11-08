@@ -15,7 +15,7 @@ everywhere — never a copy in an app. Shipped as source, no build step.
 
 ```jsonc
 // package.json — pinned to a release tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.1" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.2" }
 ```
 
 ```ts
@@ -42,6 +42,15 @@ carry no `"use client"`; the rest are client components. The colours are
 (`node scripts/gen-dark-palette.mjs`); `<html data-theme>` is light, dark or
 system. The app names its faces `--font-sans-ui` / `--font-mono-ui` (Geist).
 
+## One definition, both sides
+
+`src/recipes/` holds what the React kit and the Astro components share,
+framework-neutral: `button.ts` (the Button's classes — the sites add the
+`site-*` sizes and the pill shape), `input.ts` (a text control's box) and
+`mark.ts` (the logo's geometry). `react/button.tsx`, `react/input.tsx`,
+`react/mark.tsx` and `Button.astro`, `Field.astro`, `Logo.astro` read them;
+a test refuses the mark drawn anywhere else.
+
 ## Checks every app runs
 
 - `foldrun-ui-check-native [paths]` — no browser-native controls (selects,
@@ -60,7 +69,7 @@ The dashboard and the console run both from their guard tests
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.1" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.2" }
 ```
 
 ```astro

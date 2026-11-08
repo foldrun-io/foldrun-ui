@@ -32,40 +32,17 @@ interface Props {
   class?: string;
   [key: string]: unknown;
 }
+import { buttonVariants } from "../recipes/button.ts";
+import { cn } from "../react/cn.ts";
 const { href, type = "button", variant = "primary", size = "lg", shape = size === "sm" ? "rounded" : "pill", block = false, signup, class: cls = "", ...rest } = Astro.props;
+// The same Button as the dashboard's (recipes/button.ts): a page's call to
+// action takes the site-* sizes and, mostly, the pill shape. "outline" is the
+// kit's secondary.
+const VARIANT = { primary: "primary", outline: "secondary", ghost: "ghost" } as const;
+const SIZE = { lg: "site-lg", md: "site-md", sm: "site-sm" } as const;
+const classes = cn(buttonVariants({ variant: VARIANT[variant], size: SIZE[size], shape, block }), cls);
 ---
-{href !== undefined ? <a
-  href={href}
-  class:list={[
-    "inline-flex shrink-0 items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors",
-    size === "lg" && "h-11 px-5 text-[0.9375rem]",
-    size === "md" && "h-10 px-4 text-sm",
-    size === "sm" && "h-8 px-3 text-sm",
-    shape === "pill" ? "rounded-full" : "rounded-md",
-    variant === "primary" && "bg-ink text-on-ink hover:bg-ink-hover",
-    variant === "outline" && "border bg-surface text-fg hover:bg-muted",
-    variant === "ghost" && "text-fg-muted hover:bg-muted hover:text-fg",
-    block && "w-full",
-    cls,
-  ]}
-  data-signup={signup}
-  {...rest}
-><slot /></a> : <button
-  type={type}
-  class:list={[
-    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors disabled:cursor-default disabled:opacity-60",
-    size === "lg" && "h-11 px-5 text-[0.9375rem]",
-    size === "md" && "h-10 px-4 text-sm",
-    size === "sm" && "h-8 px-3 text-sm",
-    shape === "pill" ? "rounded-full" : "rounded-md",
-    variant === "primary" && "bg-ink text-on-ink enabled:hover:bg-ink-hover",
-    variant === "outline" && "border bg-surface text-fg enabled:hover:bg-muted",
-    variant === "ghost" && "text-fg-muted enabled:hover:bg-muted enabled:hover:text-fg",
-    block && "w-full",
-    cls,
-  ]}
-  {...rest}
-><slot /></button>}
+{href !== undefined ? <a href={href} class={classes} data-signup={signup} {...rest}><slot /></a> : <button type={type} class={cn(classes, "cursor-pointer")} {...rest}><slot /></button>}
 
 <script>
   // One question to the app per page (src/lib/signup-client.ts); the

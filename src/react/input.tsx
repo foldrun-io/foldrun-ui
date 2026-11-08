@@ -5,9 +5,9 @@
 // Field (page.tsx) puts a label, a control and a hint together.
 import * as React from "react";
 import { cn } from "./cn";
+import { inputBase } from "../recipes/input";
 
-export const inputBase =
-  "w-full min-w-0 rounded-md border border-line bg-surface px-3 text-sm text-fg transition-colors placeholder:text-fg-subtle hover:border-line-strong focus-visible:border-focus focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-focus-soft disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger";
+export { inputBase };
 
 export function Input({ className, type = "text", ...props }: React.ComponentProps<"input">) {
   // A number box has no spinner: the browser draws those, not the kit.

@@ -23,6 +23,7 @@
   "include": [
     "src/react/**/*.ts",
     "src/react/**/*.tsx",
+    "src/recipes/**/*.ts",
     "tests/**/*.ts"
   ]
 }

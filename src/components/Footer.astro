@@ -8,7 +8,7 @@ import ThemeSwitch, { type ThemeLabels } from "./ThemeSwitch.astro";
 export interface FooterColumn { title: string; links: { href: string; label: string }[] }
 interface Props {
   columns: FooterColumn[];
-  /** The small print, left to right: "© 2026 foldrun", "Built in Australia". */
+  /** The small print, left to right: "© 2026 foldrun". */
   notes?: string[];
   /** An address under the small print, as a mailto link. */
   contact?: string;

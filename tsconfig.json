@@ -6,7 +6,10 @@
     "**/*.astro"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "src/react",
+    "tests",
+    "scripts"
   ],
   "compilerOptions": {
     "allowImportingTsExtensions": true

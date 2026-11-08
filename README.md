@@ -1,19 +1,52 @@
 # @foldrun/ui
 
-foldrun's web components and design tokens — the one look shared by
-[foldrun.io](https://foldrun.io) (`foldrun-site`) and
-[docs.foldrun.io](https://docs.foldrun.io) (`foldrun-docs`), and the same
-tokens as the dashboard (`foldrun-web` `app/globals.css`): neutral greys,
-hairlines, small radii, one blue accent, Geist.
+foldrun's one component set and design tokens, used by every foldrun app:
 
-Astro components and CSS, shipped as source. No build step: a site imports
-the `.astro` files and compiles them with its own Astro and Tailwind.
+| App | Draws with |
+|---|---|
+| the dashboard (`foldrun-web`) and the operator console (`foldrun-admin/console`) | the React kit, `@foldrun/ui/react/*`, and `kit.css` |
+| [foldrun.io](https://foldrun.io), [docs.foldrun.io](https://docs.foldrun.io), [foldrun.ir](https://foldrun.ir) | the Astro components and `styles.css` |
 
-## Use
+One implementation per pattern (owner rule, 7 Nov 2026): when an app needs
+something the kit does not have, it is added here once, released, and used
+everywhere — never a copy in an app. Shipped as source, no build step.
+
+## Use — React (Next.js)
+
+```jsonc
+// package.json — pinned to a release tag
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.0" }
+```
+
+```ts
+// next.config.ts
+transpilePackages: ["@foldrun/ui"],
+```
+
+```css
+/* app/globals.css */
+@import "tailwindcss";
+@import "@foldrun/ui/kit.css"; /* tokens, both themes, animations, @source for the kit */
+```
+
+```tsx
+import { Button } from "@foldrun/ui/react/button";
+import { Select } from "@foldrun/ui/react/select";
+import { Panel, PageHeader } from "@foldrun/ui/react/page";
+```
+
+Each file is its own export (`scripts/exports.mjs` writes the list; a test
+keeps it current). Server-safe files (`page`, `button`, `table`, `mark`, …)
+carry no `"use client"`; the rest are client components. The colours are
+`src/styles/tokens.css` and the generated `theme-dark.css`
+(`node scripts/gen-dark-palette.mjs`); `<html data-theme>` is light, dark or
+system. The app names its faces `--font-sans-ui` / `--font-mono-ui` (Geist).
+
+## Use — Astro sites
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "github:foldrun-io/foldrun-ui#v0.2.2" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.0" }
 ```
 
 ```astro

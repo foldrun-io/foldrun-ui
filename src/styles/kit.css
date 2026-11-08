@@ -1,0 +1,12 @@
+/* What a React app imports after Tailwind to be drawn with the kit:
+
+     @import "tailwindcss";
+     @import "@foldrun/ui/kit.css";
+
+   The tokens (both themes), the enter/leave animations the kit's dialogs,
+   menus and popovers use, and the kit's own files for Tailwind to scan — a
+   @source path is read from this file, so an app need not know where
+   node_modules put the package. */
+@import "tw-animate-css";
+@import "./tokens.css";
+@source "../react";

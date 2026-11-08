@@ -107,6 +107,7 @@ const ld = (o: unknown) => JSON.stringify(o).replace(/</g, "\\u003c");
     {feeds.map((f) => <link rel="alternate" type="application/rss+xml" title={f.title} href={f.href} />)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {fontPreload && <link rel="preload" href={fontPreload} as="font" type="font/woff2" crossorigin />}
+    {/* foldrun-allow-html: JSON-LD is JSON.stringify output with every "<" escaped (ld above), so no value can close the script */}
     {structured.map((s) => <script is:inline type="application/ld+json" set:html={ld(s)} />)}
     <slot name="head" />
   </head>

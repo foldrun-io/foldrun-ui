@@ -12,6 +12,6 @@ const { title, body, ctas = [], note } = Astro.props;
       {body && <p class="t-lead mx-auto max-w-2xl">{body}</p>}
     </div>
     <ButtonRow ctas={ctas} center class="w-full min-[420px]:w-auto" />
-    {note && <p class="text-sm text-fg-muted" set:html={note} />}
+    {note && <p class="text-sm text-fg-muted">{note}</p>}
   </div>
 </section>

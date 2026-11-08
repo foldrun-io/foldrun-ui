@@ -15,7 +15,7 @@ everywhere — never a copy in an app. Shipped as source, no build step.
 
 ```jsonc
 // package.json — pinned to a release tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.0" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.1" }
 ```
 
 ```ts
@@ -42,11 +42,25 @@ carry no `"use client"`; the rest are client components. The colours are
 (`node scripts/gen-dark-palette.mjs`); `<html data-theme>` is light, dark or
 system. The app names its faces `--font-sans-ui` / `--font-mono-ui` (Geist).
 
+## Checks every app runs
+
+- `foldrun-ui-check-native [paths]` — no browser-native controls (selects,
+  checkboxes, date inputs, `title=` tooltips, `<details>`, alert/confirm).
+- `foldrun-ui-check-security [paths]` — no injection doors (OWASP A03): raw
+  HTML (`dangerouslySetInnerHTML`, `set:html`, `innerHTML=`,
+  `insertAdjacentHTML`, `document.write`), code from text (`eval`,
+  `new Function`, string timers), `javascript:` URLs, and `target="_blank"`
+  without `rel="noopener"`. An exception that must stay says why on a line
+  above it: `foldrun-allow-html: <reason>`.
+
+The dashboard and the console run both from their guard tests
+(`tests/kit-only.test.ts`); the sites from `npm run check` and pre-push.
+
 ## Use — Astro sites
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.0" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.1" }
 ```
 
 ```astro

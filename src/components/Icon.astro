@@ -10,4 +10,5 @@ const { name, class: cls = "size-5", strokeWidth = 1.75 } = Astro.props;
 const inner = (name && ICONS[name]) || '<circle cx="12" cy="12" r="9"/>';
 const MIRROR = new Set(["arrow-right", "arrow-left", "arrow-up-right"]);
 ---
+{/* foldrun-allow-html: `inner` is this file's own constant SVG table (lib/icons.ts) or a fixed circle; a name only picks an entry, never adds markup */}
 <svg class:list={[cls, name && MIRROR.has(name) && "rtl:-scale-x-100"]} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width={strokeWidth} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" set:html={inner} />

@@ -1,0 +1,15 @@
+---
+// A thin band above the header, on every page of a site: one sentence that
+// every visitor must read before anything else (foldrun.ir: "this site only
+// sells credit; foldrun itself is foldrun.io"), and at most one link. It is
+// a note, not an alert: quiet tones, no close button, nothing to dismiss.
+import Icon from "./Icon.astro";
+interface Props { text: string; link?: { href: string; label: string }; icon?: string; width?: "site" | "wide"; class?: string }
+const { text, link, icon = "circle-alert", width = "site", class: cls = "" } = Astro.props;
+---
+<div role="note" class:list={["border-b bg-sunken text-sm text-fg-muted", cls]}>
+  <div class:list={[width === "wide" ? "container-wide" : "container-site", "flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5"]}>
+    <span class="flex min-w-0 items-start gap-2"><Icon name={icon} class="mt-0.5 size-4 shrink-0" /><span class="text-pretty">{text}</span></span>
+    {link && <a href={link.href} class="inline-flex shrink-0 items-center gap-1 font-medium text-fg underline-offset-4 hover:underline">{link.label}<Icon name="arrow-right" class="size-3.5" /></a>}
+  </div>
+</div>

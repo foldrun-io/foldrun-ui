@@ -15,7 +15,7 @@ everywhere — never a copy in an app. Shipped as source, no build step.
 
 ```jsonc
 // package.json — pinned to a release tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.3" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.4" }
 ```
 
 ```ts
@@ -69,7 +69,7 @@ The dashboard and the console run both from their guard tests
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.3" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.4" }
 ```
 
 ```astro
@@ -123,7 +123,7 @@ colour, size and radius is a token in `src/styles/global.css`.
 | | |
 |---|---|
 | `src/layouts/BaseLayout.astro` | head, meta, schema.org, theme before first paint, fonts, header and footer slots |
-| `src/components/` | Header, Footer, ThemeSwitch, Hero, Section, SectionTitle, Button, ButtonRow, Card, FeatureGrid, Split, MediaPanel, Panel, TracePanel, CodePanel, Steps, StepNumber, StatGrid, PricingCards, PlanCard, ComparisonTable, Faq, Disclosure, Timeline, Callout, Badge, Chip, Check, Icon, IconTile, Logo, BrandMark, LogoWall, Prose, ProductTour, ScreenshotFrame, CtaBand (Monogram is deprecated: initials read as placeholders); for forms: Field (a labelled text field), ChoiceTiles (one choice from a few, our own pressed buttons), DataList (name and value rows), and Button without `href` (a real `<button>`) |
+| `src/components/` | Header, Footer, NoticeBar (one sentence above the header, every page), ThemeSwitch, Hero, Section, SectionTitle, Button, ButtonRow, Card, FeatureGrid, Split, MediaPanel, Panel, TracePanel, CodePanel, Steps, StepNumber, StatGrid, PricingCards, PlanCard, ComparisonTable, Faq, Disclosure, Timeline, Callout, Badge, Chip, Check, Icon, IconTile, Logo, BrandMark, LogoWall, Prose, ProductTour, ScreenshotFrame, CtaBand (Monogram is deprecated: initials read as placeholders); for forms: Field (a labelled text field), ChoiceTiles (one choice from a few, our own pressed buttons), DataList (name and value rows), and Button without `href` (a real `<button>`) |
 | `src/lib/icons.ts` | the Lucide icons the components draw, by name |
 | `src/lib/brands.ts` | vendors' own single-colour marks (Simple Icons, CC0) for BrandMark, LogoWall and Card `mark`; a vendor without one is shown by name |
 | `src/lib/boot.js` | the first-paint script (`html.js`, the saved theme), for `strictCsp` |

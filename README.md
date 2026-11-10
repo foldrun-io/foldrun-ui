@@ -15,7 +15,7 @@ everywhere — never a copy in an app. Shipped as source, no build step.
 
 ```jsonc
 // package.json — pinned to a release tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.2" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.3" }
 ```
 
 ```ts
@@ -69,7 +69,7 @@ The dashboard and the console run both from their guard tests
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.2" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.3" }
 ```
 
 ```astro
@@ -97,8 +97,8 @@ colour, size and radius is a token in `src/styles/global.css`.
   fontPreload="/fonts/Estedad-wght-v8.6.woff2" …>
   <Header slot="header" labels={{ skip: "…", home: "…", nav: "…", menu: "…" }} … />
   …
-  <Footer slot="footer" labels={{ nav: "…", theme: { group: "…", system: "…", light: "…", dark: "…" } }} …>
-    <!-- anything beside the mark: a trust seal -->
+  <Footer slot="footer" labels={{ nav: "…", seal: "…", theme: { group: "…", system: "…", light: "…", dark: "…" } }} …>
+    <Fragment slot="seal"><!-- a trust seal: it closes the row of link columns --></Fragment>
   </Footer>
 </BaseLayout>
 ```

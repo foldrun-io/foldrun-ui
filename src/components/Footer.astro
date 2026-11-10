@@ -1,8 +1,11 @@
 ---
 // The footer: link columns, the mark, a line of small print, the status
 // dot (asked of the platform once the page is idle; grey until it answers)
-// and the theme switch. Every word and link is a prop. Anything in the
-// default slot (a trust seal) sits beside the mark.
+// and the theme switch. Every word and link is a prop. A trust seal goes in
+// the "seal" slot: it closes the row of link columns (the left end on a
+// right-to-left page), in a framed tile, under labels.seal when given; on a
+// phone it follows the columns. Anything in the default slot sits beside the
+// mark.
 import Logo from "./Logo.astro";
 import ThemeSwitch, { type ThemeLabels } from "./ThemeSwitch.astro";
 export interface FooterColumn { title: string; links: { href: string; label: string }[] }
@@ -18,15 +21,17 @@ interface Props {
   /** "wide" lines the footer up with a wide page (the docs). */
   width?: "site" | "wide";
   /** The footer's own words, for a page in another language. */
-  labels?: { nav?: string; status?: string; theme?: Partial<ThemeLabels> };
+  labels?: { nav?: string; status?: string; seal?: string; theme?: Partial<ThemeLabels> };
 }
 const { columns, notes = [], contact, statusApi, statusHref, width = "site", labels = {} } = Astro.props;
+const seal = Astro.slots.has("seal");
 const cols = columns.length >= 5 ? "sm:grid-cols-3 lg:grid-cols-5" : columns.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-4";
 ---
 
 <footer class="border-t bg-paper">
   <div class:list={[width === "wide" ? "container-wide" : "container-site", " space-y-14 py-14 sm:py-16"]}>
-    <nav id="footer-nav" aria-label={labels.nav ?? "Footer"} class:list={["grid grid-cols-2 gap-x-6 gap-y-10", cols]}>
+    <div class:list={[seal && "flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between sm:gap-6"]}>
+    <nav id="footer-nav" aria-label={labels.nav ?? "Footer"} class:list={["grid grid-cols-2 gap-x-6 gap-y-10", cols, seal && "min-w-0 sm:flex-1"]}>
       {columns.map((col) => (
         <div class="min-w-0 space-y-4">
           <h2 class="text-sm font-medium">{col.title}</h2>
@@ -38,6 +43,13 @@ const cols = columns.length >= 5 ? "sm:grid-cols-3 lg:grid-cols-5" : columns.len
         </div>
       ))}
     </nav>
+    {seal && (
+      <div class="shrink-0 space-y-4">
+        {labels.seal && <h2 class="text-sm font-medium">{labels.seal}</h2>}
+        <div class="inline-flex rounded-lg border bg-surface p-2 [&_img]:block [&_img]:h-auto [&_img]:max-h-28 [&_img]:w-auto"><slot name="seal" /></div>
+      </div>
+    )}
+    </div>
     <div class="space-y-6">
       {Astro.slots.has("default") ? <div class="flex flex-wrap items-center justify-between gap-6"><Logo mark /><slot /></div> : <Logo mark />}
       <div class="flex flex-col gap-5 text-sm text-fg-muted md:flex-row md:items-center md:justify-between">

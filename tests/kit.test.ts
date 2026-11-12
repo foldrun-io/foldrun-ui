@@ -15,7 +15,7 @@ const src = (f: string) => fs.readFileSync(path.join(KIT, f), "utf8");
 test("the kit's server-safe parts stay server-safe", () => {
   // A server page composes these directly; a hook or "use client" here would
   // turn every page that draws a Panel into a client bundle.
-  for (const f of ["mark.tsx", "page.tsx", "button.tsx", "input.tsx", "segmented.tsx", "pager.tsx", "table.tsx", "chart.tsx", "cn.ts", "skeleton.tsx", "paging.ts", "list-search-model.ts"]) {
+  for (const f of ["mark.tsx", "auth-card.tsx", "page.tsx", "button.tsx", "input.tsx", "segmented.tsx", "pager.tsx", "table.tsx", "chart.tsx", "cn.ts", "skeleton.tsx", "paging.ts", "list-search-model.ts"]) {
     assert.doesNotMatch(src(f), /^["']use client["']/m, `${f} must stay server-safe`);
     assert.doesNotMatch(src(f), /\buse(State|Effect|Ref|Router|Pathname|SearchParams|SyncExternalStore)\(/, `${f} calls a hook — move that part to a client file`);
   }
@@ -28,7 +28,7 @@ test("each pattern is defined once, in its own file", () => {
     Button: "button.tsx", Select: "select.tsx", Input: "input.tsx", Toast: "toast.tsx", useConfirm: "confirm.tsx", usePrompt: "prompt.tsx",
     DataTable: "table.tsx", Checkbox: "choice.tsx", Switch: "choice.tsx", RadioGroup: "choice.tsx", Disclosure: "disclosure.tsx",
     Combobox: "combobox.tsx", FileButton: "file-button.tsx", Slider: "slider.tsx", TimeField: "time-field.tsx", DateTimeField: "date-time-field.tsx",
-    Tooltip: "tooltip.tsx", IconButton: "tooltip.tsx", FoldrunMark: "mark.tsx",
+    Tooltip: "tooltip.tsx", IconButton: "tooltip.tsx", FoldrunMark: "mark.tsx", AuthCard: "auth-card.tsx", Brand: "auth-card.tsx",
   };
   for (const [name, file] of Object.entries(once)) {
     const defs = files.filter((f) => new RegExp(`(?:^|\\n)\\s*export\\s+function\\s+${name}\\b`).test(src(f)));

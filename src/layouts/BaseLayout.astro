@@ -38,6 +38,9 @@ interface Props {
   signupUrl?: string;
   /** Where the plans are, for "Choose a plan" when only paid sign-up is open. */
   pricingUrl?: string;
+  /** GET <app>/api/pricing: the public catalogue, so a pricing page shows
+   *  the plans while paid sign-up is off (signup-client.ts). */
+  pricingApi?: string;
   /** Extra <link rel="alternate"> feeds. */
   feeds?: { title: string; href: string }[];
   /** The page's language ("en", "fa"). */
@@ -61,7 +64,7 @@ interface Props {
   strictCsp?: boolean;
 }
 
-const { title, description, siteUrl, type = "website", published, structured = [], signupApi, signupUrl, pricingUrl = "/pricing/", feeds = [], lang = "en", siteName = "foldrun", ogLocale, image, imageAlt, noindex = false, fontPreload = geist, strictCsp = false } = Astro.props;
+const { title, description, siteUrl, type = "website", published, structured = [], signupApi, signupUrl, pricingUrl = "/pricing/", pricingApi, feeds = [], lang = "en", siteName = "foldrun", ogLocale, image, imageAlt, noindex = false, fontPreload = geist, strictCsp = false } = Astro.props;
 const dir = Astro.props.dir ?? (/^(fa|ar|he|ur)\b/.test(lang) ? "rtl" : "ltr");
 const canonical = Astro.props.canonical ?? new URL(Astro.url.pathname, Astro.site ?? siteUrl).toString();
 const imageUrl = image ? new URL(image, Astro.site ?? siteUrl).toString() : undefined;
@@ -103,6 +106,7 @@ const ld = (o: unknown) => JSON.stringify(o).replace(/</g, "\\u003c");
     {signupApi && <meta name="foldrun-signup-api" content={signupApi} />}
     {signupUrl && <meta name="foldrun-signup-url" content={signupUrl} />}
     {signupApi && <meta name="foldrun-pricing-url" content={pricingUrl} />}
+    {pricingApi && <meta name="foldrun-pricing-api" content={pricingApi} />}
     <link rel="sitemap" href="/sitemap-index.xml" />
     {feeds.map((f) => <link rel="alternate" type="application/rss+xml" title={f.title} href={f.href} />)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

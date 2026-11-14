@@ -15,7 +15,7 @@ everywhere — never a copy in an app. Shipped as source, no build step.
 
 ```jsonc
 // package.json — pinned to a release tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.5" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.6" }
 ```
 
 ```ts
@@ -69,7 +69,7 @@ The dashboard and the console run both from their guard tests
 
 ```jsonc
 // package.json — pinned to a tag
-"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.5" }
+"dependencies": { "@foldrun/ui": "https://codeload.github.com/foldrun-io/foldrun-ui/tar.gz/refs/tags/v0.3.6" }
 ```
 
 ```astro

@@ -22,6 +22,34 @@ export interface CatalogPlan {
 }
 export interface Signup { free: boolean; paid: boolean; plans: CatalogPlan[] }
 
+// GET <app>/api/pricing (BaseLayout's pricingApi): the public catalogue —
+// every plan the app sells, at the price it charges, whatever the sign-up
+// switches say. /api/signup lists plans only while paid sign-up is in
+// effect; the catalogue is how a pricing page shows them the rest of the
+// time. Its plan → the same CatalogPlan: the fee in USD minor units, the
+// fast lane as the high-priority one.
+function parseCatalogue(j: unknown): CatalogPlan[] {
+  if (!j || typeof j !== "object") return [];
+  const plans = (j as Record<string, unknown>).plans;
+  if (!Array.isArray(plans)) return [];
+  const out: CatalogPlan[] = [];
+  for (const p of plans) {
+    if (!p || typeof p !== "object") continue;
+    const q = p as Record<string, unknown>;
+    const id = str(q.id), name = str(q.name);
+    if (!id || !name) continue;
+    const fee = num(q.feeUsd);
+    const at = q.computeAtOnce && typeof q.computeAtOnce === "object" ? (q.computeAtOnce as Record<string, unknown>) : null;
+    out.push({
+      id, name,
+      price: fee === null ? null : { amount: Math.round(fee * 100), currency: "usd", interval: "month" },
+      credits: num(q.creditsPerMonth), storageGb: num(q.storageGb), vcpu: num(at?.vcpu), memoryGiB: num(at?.memGiB),
+      priority: q.lane === "fast" ? true : q.lane === "normal" ? false : null,
+    });
+  }
+  return out;
+}
+
 const meta = (name: string) => document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)?.content;
 export const signupUrl = () => meta("foldrun-signup-url") ?? "";
 
@@ -80,33 +108,45 @@ export function applyCtas(s: Signup | null) {
   }
 }
 
-function settle(s: Signup | null) {
+/** What components fill from: the sign-up answer, its plans from the
+ *  catalogue when the switches list none. The buttons follow the switches
+ *  alone (applyCtas), so a plan shown from the catalogue while paid sign-up
+ *  is off still says "Request access". */
+let filled: Signup | null = null;
+
+function settle(s: Signup | null, catalogue: CatalogPlan[]) {
   answer = s;
+  filled = s && s.plans.length ? s : catalogue.length ? { free: s?.free ?? false, paid: s?.paid ?? false, plans: catalogue } : s;
   done = true;
-  for (const f of fillers) { try { f(s); } catch { /* one component's mistake is not another's */ } }
+  for (const f of fillers) { try { f(filled); } catch { /* one component's mistake is not another's */ } }
   applyCtas(s);
 }
+
+const ask = (url: string | undefined): Promise<unknown> => {
+  if (!url) return Promise.resolve(null);
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 6000);
+  return fetch(url, { signal: ctl.signal, credentials: "omit" })
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null)
+    .finally(() => clearTimeout(timer));
+};
 
 /** Ask (once). Safe to call from every component that needs the answer. */
 export function startSignup() {
   if (started) return;
   started = true;
   const api = meta("foldrun-signup-api");
-  if (!api) { settle(null); return; }
-  const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), 6000);
-  // The browser's own cache: /api/signup answers `max-age=60`, so a visitor
-  // reading five pages asks once, and a switch turned off shows within a minute.
-  fetch(api, { signal: ctl.signal, credentials: "omit" })
-    .then((r) => (r.ok ? r.json() : null))
-    .then((j) => settle(parse(j)))
-    .catch(() => settle(null))
-    .finally(() => clearTimeout(timer));
+  const catalogue = meta("foldrun-pricing-api");
+  if (!api && !catalogue) { settle(null, []); return; }
+  // The browser's own cache: /api/signup answers `max-age=60` and
+  // /api/pricing five minutes, so a visitor reading five pages asks once.
+  Promise.all([ask(api), ask(catalogue)]).then(([j, c]) => settle(parse(j), parseCatalogue(c)));
 }
 
 /** Run `fn` with the answer (null when there is none), then switch buttons. */
 export function whenSignup(fn: (s: Signup | null) => void) {
-  if (done) { fn(answer); applyCtas(answer); return; }
+  if (done) { fn(filled); applyCtas(answer); return; }
   fillers.push(fn);
   startSignup();
 }

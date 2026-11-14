@@ -1,6 +1,6 @@
 {
   "name": "@foldrun/ui",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "foldrun's one component set and design tokens: the React kit the dashboard and the operator console are drawn with, and the Astro components foldrun.io, foldrun.ir and docs.foldrun.io are built from. Source, not a build.",
   "type": "module",
   "license": "FSL-1.1-ALv2",

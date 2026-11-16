@@ -156,7 +156,7 @@ dependency at `file:../foldrun-ui`.
 CI's `visual` job builds the demo and photographs it in full
 (`visual/ui.spec.mjs`: light, dark and a phone width) in Microsoft's
 Playwright image, comparing each shot with `visual/baselines/`. More than
-0.2% of the pixels different fails, and the `visual` artifact holds
+100 pixels different fails, and the `visual` artifact holds
 `-actual.png`, `-expected.png` and `-diff.png`. `bash scripts/visual.sh
 <built-demo-dir>` runs the same compare locally (Docker).
 

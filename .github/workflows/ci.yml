@@ -19,6 +19,14 @@ on:
   push:
     branches: [main]
   pull_request:
+  # By hand, on a branch: the visual job with "update" makes new baselines
+  # (README → Visual baselines).
+  workflow_dispatch:
+    inputs:
+      update-visual:
+        description: "update the visual baselines (download them with scripts/visual-baselines.sh)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -111,3 +119,31 @@ jobs:
           git archive "$HEAD" | tar -x -C "$d"
           [ -n "$(ls -A "$d")" ] || { echo "the tree unpacked empty — nothing was scanned"; exit 1; }
           "$gl" dir "$d" --no-banner --redact=90 --exit-code 1 -v
+
+  # The demo (every component once, and the RTL page) photographed in full
+  # and compared with visual/baselines (FOL-196): light, dark and a phone
+  # width, in Microsoft's Playwright image. A difference fails; the `visual`
+  # artifact shows actual, expected and diff.
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22.23.4"
+          cache: npm
+      - run: npm ci
+      - name: build the demo
+        run: npx --no-install astro build --outDir "$GITHUB_WORKSPACE/.visual-site"
+      - name: compare (or, by hand with update ticked, make new baselines)
+        env:
+          VISUAL_UPDATE: ${{ github.event_name == 'workflow_dispatch' && inputs.update-visual && '1' || '0' }}
+        run: bash scripts/visual.sh "$GITHUB_WORKSPACE/.visual-site"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: visual
+          path: visual-report/
+          if-no-files-found: ignore
+          retention-days: 14

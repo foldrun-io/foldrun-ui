@@ -151,6 +151,21 @@ dev dependencies in every consuming site to "prepare" it.) Hooks: `sh
 .githooks/install.sh`. To try a change in a site before tagging, point its
 dependency at `file:../foldrun-ui`.
 
+### Visual baselines
+
+CI's `visual` job builds the demo and photographs it in full
+(`visual/ui.spec.mjs`: light, dark and a phone width) in Microsoft's
+Playwright image, comparing each shot with `visual/baselines/`. More than
+0.2% of the pixels different fails, and the `visual` artifact holds
+`-actual.png`, `-expected.png` and `-diff.png`. `bash scripts/visual.sh
+<built-demo-dir>` runs the same compare locally (Docker).
+
+Baselines are made by CI on Linux, never on a laptop. **A change meant to
+change a component updates the baselines in the same pull request:** push
+the branch; Actions → ci → Run workflow on it with "update the visual
+baselines" ticked; `GH_TOKEN=… bash scripts/visual-baselines.sh <run id>`;
+look at the pictures and commit them with the change.
+
 Release: bump `version`, tag `vX.Y.Z`, push the tag, then move each site's
 dependency to the new tag.
 

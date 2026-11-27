@@ -24,7 +24,7 @@ export function ChoiceCards({ options, value, onChange, label, columns = 2 }: { 
             disabled={o.disabled}
             onClick={() => onChange(o.value)}
             className={cn(
-              "flex min-w-0 flex-col items-start gap-1.5 rounded-lg border bg-surface p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-50",
+              "flex min-w-0 flex-col items-start gap-1.5 rounded-lg border bg-surface p-4 text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-50",
               on ? "border-fg ring-1 ring-fg" : "border-line hover:border-line-strong hover:bg-sunken",
             )}
           >

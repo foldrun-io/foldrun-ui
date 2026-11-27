@@ -33,7 +33,7 @@ export function StepRail({ steps, label }: { steps: RailStep[]; label: string })
               <span className={cn("min-w-0 truncate max-md:sr-only", s.state === "current" ? "font-medium text-fg" : "text-fg-muted")}>{s.label}</span>
             </>
           );
-          const cls = cn("flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-sm", s.state === "current" && "md:bg-muted");
+          const cls = cn("flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-start text-sm", s.state === "current" && "md:bg-muted");
           return (
             <li key={s.key} aria-current={s.state === "current" ? "step" : undefined} className="shrink-0 md:shrink">
               {s.state === "current" ? (

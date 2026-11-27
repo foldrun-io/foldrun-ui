@@ -33,7 +33,7 @@ export function TR({ className, ...props }: React.ComponentProps<"tr">) {
 export function TH({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
-      className={cn("h-9 whitespace-nowrap px-4 text-left align-middle text-xs font-medium text-fg-muted first:pl-4 last:pr-4", className)}
+      className={cn("h-9 whitespace-nowrap px-4 text-start align-middle text-xs font-medium text-fg-muted first:ps-4 last:pe-4", className)}
       {...props}
     />
   );
@@ -91,7 +91,7 @@ export function DataTable({
         <thead>
           <tr className="border-b border-line-faint">
             {columns.map((c, i) => (
-              <TH key={i} className={cn("h-10 text-[13px]", c.align === "right" ? "text-right" : "text-left", c.width)}>
+              <TH key={i} className={cn("h-10 text-[13px]", c.align === "right" ? "text-end" : "text-start", c.width)}>
                 {c.label}
               </TH>
             ))}
@@ -108,7 +108,7 @@ export function DataTable({
             rows.map((r) => (
               <tr key={r.key} className={cn("align-top hover:bg-sunken", r.tone === "error" && "bg-danger-soft/40", r.tone === "warn" && "bg-warning-soft/40")}>
                 {r.cells.map((cell, i) => (
-                  <TD key={i} className={cn("py-2 text-sm text-fg", columns[i]?.align === "right" && "text-right tabular-nums")}>
+                  <TD key={i} className={cn("py-2 text-sm text-fg", columns[i]?.align === "right" && "text-end tabular-nums")}>
                     {r.href && i === 0 ? (
                       <Link href={r.href} className="font-medium text-fg hover:underline">
                         {cell}

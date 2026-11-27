@@ -70,7 +70,7 @@ export function ChartLegend({ items, aside, className }: { items: { key: string;
           {s.label}
         </span>
       ))}
-      {aside && <span className="ml-auto text-fg-subtle">{aside}</span>}
+      {aside && <span className="ms-auto text-fg-subtle">{aside}</span>}
     </div>
   );
 }

@@ -143,7 +143,7 @@ export function Select({
           aria-invalid={ariaRest["aria-invalid"]}
           className={cn(
             inputBase,
-            "inline-flex items-center justify-between gap-2 py-0 pl-3 pr-2 text-left data-[placeholder]:text-fg-subtle",
+            "inline-flex items-center justify-between gap-2 py-0 ps-3 pe-2 text-start data-[placeholder]:text-fg-subtle",
             size === "sm" ? "h-8 text-[13px]" : "h-9",
             selectClassName,
           )}
@@ -189,10 +189,10 @@ export function Select({
                     value={toKey(o.value)}
                     textValue={o.text}
                     disabled={o.disabled}
-                    className="relative flex cursor-default select-none items-center rounded-md py-1.5 pl-2 pr-8 text-sm text-fg-secondary outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-muted data-[highlighted]:text-fg data-[disabled]:opacity-50 data-[state=checked]:text-fg"
+                    className="relative flex cursor-default select-none items-center rounded-md py-1.5 ps-2 pe-8 text-sm text-fg-secondary outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-muted data-[highlighted]:text-fg data-[disabled]:opacity-50 data-[state=checked]:text-fg"
                   >
                     <S.ItemText>{o.label}</S.ItemText>
-                    <S.ItemIndicator className="absolute right-2 inline-flex">
+                    <S.ItemIndicator className="absolute end-2 inline-flex">
                       <Check className="size-4" aria-hidden />
                     </S.ItemIndicator>
                   </S.Item>

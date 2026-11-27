@@ -82,7 +82,7 @@ export function ChecklistCard({
             {p.done}/{p.total}
           </span>
         )}
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ms-auto flex items-center gap-1">
           {actions}
           {menu && (
             <Menu>
@@ -101,14 +101,14 @@ export function ChecklistCard({
           <li key={r.key} className="relative">
             {r.detail && !r.done ? (
               <div className="space-y-3 rounded-md border border-line-strong bg-sunken px-3 py-3 text-sm [&>div>svg]:size-4 [&>div>svg]:shrink-0">
-                <div className="flex min-w-0 items-start gap-2.5 pr-7">
+                <div className="flex min-w-0 items-start gap-2.5 pe-7">
                   <span className="mt-0.5 flex shrink-0 text-fg [&_svg]:size-4">{r.icon ?? <Circle />}</span>
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <p className="font-medium text-fg">{r.label}</p>
                     {r.hint && <p className="text-fg-muted">{r.hint}</p>}
                   </div>
                 </div>
-                <div className="pl-6.5">{r.detail}</div>
+                <div className="ps-6.5">{r.detail}</div>
               </div>
             ) : (
               <Link
@@ -116,7 +116,7 @@ export function ChecklistCard({
                 className={cn(
                   "flex min-h-10 items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
                   r.done ? "text-fg-muted hover:bg-sunken hover:text-fg-secondary" : "bg-sunken text-fg hover:bg-muted",
-                  r.onHide && !r.done && "pr-11",
+                  r.onHide && !r.done && "pe-11",
                 )}
               >
                 {r.icon && <span className="flex shrink-0 [&_svg]:size-4">{r.icon}</span>}
@@ -128,7 +128,7 @@ export function ChecklistCard({
               </Link>
             )}
             {r.onHide && !r.done && (
-              <div className={cn("absolute right-1.5", r.detail ? "top-2" : "top-1/2 -translate-y-1/2")}>
+              <div className={cn("absolute end-1.5", r.detail ? "top-2" : "top-1/2 -translate-y-1/2")}>
                 <Menu>
                   <MenuTrigger asChild>
                     <Button variant="ghost" size="icon-xs" className="text-fg-muted" aria-label={`Options: ${r.label}`} disabled={busy}>

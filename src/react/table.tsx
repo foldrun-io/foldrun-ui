@@ -43,9 +43,12 @@ export function TD({ className, ...props }: React.ComponentProps<"td">) {
   return <td className={cn("px-4 py-2.5 align-middle text-fg-secondary", className)} {...props} />;
 }
 
+const ALIGN = { start: "text-start", end: "text-end", left: "text-left", right: "text-right" } as const;
+
 export interface DataColumn {
   label: React.ReactNode;
-  align?: "left" | "right";
+  /** start and end follow the page's direction (a number column is "end"); left and right are that side in every language. */
+  align?: "start" | "end" | "left" | "right";
   /** A width class, when a column should not flex. */
   width?: string;
 }
@@ -91,7 +94,7 @@ export function DataTable({
         <thead>
           <tr className="border-b border-line-faint">
             {columns.map((c, i) => (
-              <TH key={i} className={cn("h-10 text-[13px]", c.align === "right" ? "text-end" : "text-start", c.width)}>
+              <TH key={i} className={cn("h-10 text-[13px]", ALIGN[c.align ?? "start"], c.width)}>
                 {c.label}
               </TH>
             ))}
@@ -108,7 +111,7 @@ export function DataTable({
             rows.map((r) => (
               <tr key={r.key} className={cn("align-top hover:bg-sunken", r.tone === "error" && "bg-danger-soft/40", r.tone === "warn" && "bg-warning-soft/40")}>
                 {r.cells.map((cell, i) => (
-                  <TD key={i} className={cn("py-2 text-sm text-fg", columns[i]?.align === "right" && "text-end tabular-nums")}>
+                  <TD key={i} className={cn("py-2 text-sm text-fg", ALIGN[columns[i]?.align ?? "start"], (columns[i]?.align === "right" || columns[i]?.align === "end") && "tabular-nums")}>
                     {r.href && i === 0 ? (
                       <Link href={r.href} className="font-medium text-fg hover:underline">
                         {cell}

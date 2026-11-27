@@ -8,7 +8,7 @@
 // placeholders until the answer comes. No answer or no plans: the labels
 // stay, the numbers do not, and one column says where prices are shown.
 export type CellValue = string | { text: string; tone?: "warning" | "muted" | "success" };
-export type LiveField = "price" | "credits" | "storage" | "pool" | "priority" | "seats";
+export type LiveField = "price" | "credits" | "storage" | "pool" | "priority" | "seats" | "model-week" | "model-month" | "fable";
 interface Props {
   columns?: string[];
   rows?: CellValue[][];
@@ -66,7 +66,7 @@ const VISIBLE = 4;
 )}
 
 <script>
-  import { whenSignup, money, per, credits, storage, pool } from "../lib/signup-client.ts";
+  import { whenSignup, money, per, credits, storage, pool, usdWhole } from "../lib/signup-client.ts";
   for (const root of document.querySelectorAll<HTMLElement>("[data-live-table]")) {
     whenSignup((s) => {
       const plans = s?.plans ?? [];
@@ -85,6 +85,9 @@ const VISIBLE = 4;
           : field === "pool" ? pool(p) ?? "—"
           : field === "priority" ? (p.priority ? "Yes" : "—")
           : field === "seats" ? "Unlimited"
+          : field === "model-week" ? (p.model ? (p.model.weekUsd === null ? "Not limited" : usdWhole(p.model.weekUsd) ?? "—") : "—")
+          : field === "model-month" ? (p.model ? (p.model.monthUsd === null ? "Not limited" : usdWhole(p.model.monthUsd) ?? "—") : "—")
+          : field === "fable" ? (p.fable ? "Yes" : "—")
           : "—";
         cell.textContent = value;
       });

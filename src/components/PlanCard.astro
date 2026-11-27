@@ -50,7 +50,7 @@ const skel = live ? "skel" : "";
       {live
         ? LIVE_BULLETS.map(([b, filler]) => <li class="flex gap-3" {...f(b)}><Icon name="check" class="mt-0.5 size-4 shrink-0" strokeWidth={2} /><span class="skel" data-text>{filler}</span></li>)
         : p.bullets!.map((b) => <li class="flex gap-3"><Icon name="check" class="mt-0.5 size-4 shrink-0" strokeWidth={2} /><span>{b}</span></li>)}
-      {live && <li class="flex gap-3"><Icon name="check" class="mt-0.5 size-4 shrink-0" strokeWidth={2} /><span>Unlimited seats</span></li>}
+      {live && <li class="flex gap-3" {...f("seats")}><Icon name="check" class="mt-0.5 size-4 shrink-0" strokeWidth={2} /><span data-text>Unlimited seats</span></li>}
       {(p.note || live) && <li class="flex gap-3 text-fg-muted" {...f("note")}><Icon name="refresh-cw" class="mt-0.5 size-4 shrink-0" /><span data-text>{p.note}</span></li>}
     </ul>
   )}

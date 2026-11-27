@@ -52,7 +52,7 @@ const VISIBLE = 4;
 )}
 
 <script>
-  import { whenSignup, money, per, credits, storage, isFree, signupUrl, type CatalogPlan } from "../lib/signup-client.ts";
+  import { whenSignup, money, per, credits, storage, isFree, signupUrl, modelAllowance, type CatalogPlan } from "../lib/signup-client.ts";
 
   const text = (el: Element | null, value: string | null) => {
     if (!el) return;
@@ -88,12 +88,15 @@ const VISIBLE = 4;
         if (!m) q("price-row")?.setAttribute("hidden", "");
         text(q("pitch"), words[p.id]?.pitch ?? null);
         const c = credits(p.credits);
-        text(q("credits"), c && (p.price?.interval === "month" ? `${c} every month` : c));
+        // A size of the subscription shows its model allowance where an old plan showed credits.
+        text(q("credits"), p.model ? modelAllowance(p) : c && (p.price?.interval === "month" ? `${c} every month` : c));
         const st = storage(p.storageGb);
         text(q("storage"), st && `${st} of storage included`);
         text(q("pool"), p.vcpu !== null && p.memoryGiB !== null ? `Compute pool: ${p.vcpu} vCPU and ${p.memoryGiB} GiB at once` : null);
-        text(q("priority"), p.priority ? "High-priority lane" : null);
+        text(q("priority"), p.fable ? "Fable models included" : p.priority ? "High-priority lane" : null);
         text(q("note"), words[p.id]?.note ?? null);
+        // Seats are an old platform plan's promise; a subscription size makes none.
+        text(q("seats"), p.model ? null : "Unlimited seats");
         el.toggleAttribute("data-hi", hasHighlight && p.id === highlight);
         for (const b of el.querySelectorAll<HTMLAnchorElement>('[data-f="cta"]')) {
           if (isFree(p)) { b.dataset.signup = "free"; b.href = base; b.textContent = "Get started"; }

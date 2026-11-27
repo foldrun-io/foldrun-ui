@@ -19,6 +19,11 @@ export interface CatalogPlan {
   vcpu: number | null;
   memoryGiB: number | null;
   priority: boolean | null;
+  /** A size of the one subscription (27 Nov 2026): its model allowance in
+   *  USD at list prices, a week and its 30-day period (null: not limited). */
+  model?: { weekUsd: number | null; monthUsd: number | null };
+  /** Fable models are inside the allowance. */
+  fable?: boolean;
 }
 export interface Signup { free: boolean; paid: boolean; plans: CatalogPlan[] }
 
@@ -30,6 +35,10 @@ export interface Signup { free: boolean; paid: boolean; plans: CatalogPlan[] }
 // fast lane as the high-priority one.
 function parseCatalogue(j: unknown): CatalogPlan[] {
   if (!j || typeof j !== "object") return [];
+  // The one subscription's sizes (27 Nov 2026), when the app lists any: the
+  // old platform plans are no longer sold, and `plans` is empty.
+  const subs = parseSubscriptions((j as Record<string, unknown>).subscriptions);
+  if (subs.length) return subs;
   const plans = (j as Record<string, unknown>).plans;
   if (!Array.isArray(plans)) return [];
   const out: CatalogPlan[] = [];
@@ -45,6 +54,29 @@ function parseCatalogue(j: unknown): CatalogPlan[] {
       price: fee === null ? null : { amount: Math.round(fee * 100), currency: "usd", interval: "month" },
       credits: num(q.creditsPerMonth), storageGb: num(q.storageGb), vcpu: num(at?.vcpu), memoryGiB: num(at?.memGiB),
       priority: q.lane === "fast" ? true : q.lane === "normal" ? false : null,
+    });
+  }
+  return out;
+}
+
+/** The catalogue's `subscriptions`: `{ id, name, priceUsd, periodDays,
+ *  model: { weekUsd, monthUsd }, fable }`, each figure the operator's. */
+export function parseSubscriptions(v: unknown): CatalogPlan[] {
+  if (!Array.isArray(v)) return [];
+  const out: CatalogPlan[] = [];
+  for (const p of v) {
+    if (!p || typeof p !== "object") continue;
+    const q = p as Record<string, unknown>;
+    const id = str(q.id), name = str(q.name), fee = num(q.priceUsd);
+    if (!id || !name || fee === null) continue;
+    const days = num(q.periodDays);
+    const m = q.model && typeof q.model === "object" ? (q.model as Record<string, unknown>) : {};
+    out.push({
+      id, name,
+      price: { amount: Math.round(fee * 100), currency: "usd", interval: days === null || days === 30 ? "30 days" : `${days} days` },
+      credits: null, storageGb: null, vcpu: null, memoryGiB: null, priority: null,
+      model: { weekUsd: num(m.weekUsd), monthUsd: num(m.monthUsd) },
+      fable: q.fable === true,
     });
   }
   return out;
@@ -171,3 +203,13 @@ export const credits = (n: number | null) => (n === null ? null : `${nf.format(n
 export const storage = (gb: number | null) => (gb === null ? null : gb >= 1000 && gb % 1000 === 0 ? `${gb / 1000} TB` : `${nf.format(gb)} GB`);
 export const pool = (p: CatalogPlan) => (p.vcpu === null || p.memoryGiB === null ? null : `${p.vcpu} vCPU · ${p.memoryGiB} GiB`);
 export const isFree = (p: CatalogPlan) => p.price?.amount === 0;
+
+/** A model allowance as a sentence: "$100 of model usage a week, $425 a month". */
+export function modelAllowance(p: CatalogPlan): string | null {
+  if (!p.model) return null;
+  const d = (n: number) => `$${nf.format(n)}`;
+  const { weekUsd: w, monthUsd: m } = p.model;
+  if (w === null && m === null) return "Model usage not limited";
+  return [w !== null ? `${d(w)} of model usage a week` : null, m !== null ? `${d(m)} a month` : null].filter(Boolean).join(", ");
+}
+export const usdWhole = (n: number | null) => (n === null ? null : `$${nf.format(n)}`);

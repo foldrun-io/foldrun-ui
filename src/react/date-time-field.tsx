@@ -72,7 +72,7 @@ export function DateTimeField({
         }}
       >
         <P.Trigger asChild disabled={disabled}>
-          <button type="button" aria-label={`${label}: ${shown}`} className={cn(inputBase, "inline-flex h-9 w-auto items-center gap-2 text-left", !cur && "text-fg-subtle", className)}>
+          <button type="button" aria-label={`${label}: ${shown}`} className={cn(inputBase, "inline-flex h-9 w-auto items-center gap-2 text-start", !cur && "text-fg-subtle", className)}>
             <CalendarDays className="size-4 shrink-0 text-fg-muted" aria-hidden />
             <span className="tabular-nums">{shown}</span>
           </button>
@@ -118,7 +118,7 @@ export function DateTimeField({
               )}
             </div>
             <div className="mt-3 flex items-center gap-1 border-t border-line pt-3">
-              <span className="mr-auto text-xs text-fg-muted">Time</span>
+              <span className="me-auto text-xs text-fg-muted">Time</span>
               <TimeField
                 label={`${label} time`}
                 value={`${pad(hh)}:${pad(mm)}`}

@@ -280,6 +280,10 @@
 
 @layer base {
   *, ::before, ::after { border-color: var(--line); }
+  /* A header cell centres itself unless an ancestor chose an alignment, and
+     to a browser `start` is no choice (it is the initial value). Under a
+     start/end alignment a header cell takes its parent's. */
+  :is(.text-start, .text-end) th { text-align: inherit; }
   html {
     font-family: var(--font-sans);
     -webkit-text-size-adjust: 100%;

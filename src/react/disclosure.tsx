@@ -57,7 +57,7 @@ export function Disclosure({
     <K.Root data-slot="disclosure" id={id} open={open} onOpenChange={set} className={cn("group/disclosure", className)}>
       <K.Trigger
         className={cn(
-          "flex w-full cursor-pointer items-center gap-1 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
+          "flex w-full cursor-pointer items-center gap-1 rounded-sm text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
           summaryClassName,
         )}
       >

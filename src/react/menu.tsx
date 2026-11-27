@@ -37,9 +37,9 @@ export function MenuItem({ className, tone, ...props }: React.ComponentProps<typ
 
 export function MenuRadioItem({ className, children, ...props }: React.ComponentProps<typeof M.RadioItem>) {
   return (
-    <M.RadioItem className={cn(menuItemClass, "pr-8", className)} {...props}>
+    <M.RadioItem className={cn(menuItemClass, "pe-8", className)} {...props}>
       {children}
-      <M.ItemIndicator className="absolute right-2 inline-flex">
+      <M.ItemIndicator className="absolute end-2 inline-flex">
         <Check />
       </M.ItemIndicator>
     </M.RadioItem>
@@ -55,5 +55,5 @@ export function MenuSeparator({ className, ...props }: React.ComponentProps<type
 }
 
 export function MenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return <span className={cn("ml-auto pl-4 text-xs text-fg-subtle", className)} {...props} />;
+  return <span className={cn("ms-auto ps-4 text-xs text-fg-subtle", className)} {...props} />;
 }

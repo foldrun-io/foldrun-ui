@@ -35,7 +35,7 @@ export function DialogContent({
       >
         {children}
         {!hideClose && (
-          <D.Close className="absolute right-3 top-3 rounded-md p-1 text-fg-muted transition-colors hover:bg-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus" aria-label="Close">
+          <D.Close className="absolute end-3 top-3 rounded-md p-1 text-fg-muted transition-colors hover:bg-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus" aria-label="Close">
             <X className="size-4" />
           </D.Close>
         )}
@@ -45,7 +45,7 @@ export function DialogContent({
 }
 
 export function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex flex-col gap-1 px-6 pb-2 pt-5 pr-12", className)} {...props} />;
+  return <div className={cn("flex flex-col gap-1 px-6 pb-2 pt-5 pe-12", className)} {...props} />;
 }
 export function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn("min-h-0 flex-1 overflow-y-auto px-6 py-3", className)} {...props} />;
@@ -71,11 +71,15 @@ export const SheetDescription = DialogDescription;
 export function SheetContent({
   className,
   children,
-  side = "right",
+  side = "end",
   hideClose = false,
   ...props
-}: React.ComponentProps<typeof D.Content> & { side?: "left" | "right" | "bottom"; hideClose?: boolean }) {
+}: React.ComponentProps<typeof D.Content> & { side?: "start" | "end" | "left" | "right" | "bottom"; hideClose?: boolean }) {
   const place = {
+    // start and end follow the page's direction: on a right-to-left page a "start" sheet opens from the right.
+    start: "inset-y-0 start-0 h-full w-[min(20rem,85vw)] border-e data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left rtl:data-[state=open]:slide-in-from-right rtl:data-[state=closed]:slide-out-to-right",
+    end: "inset-y-0 end-0 h-full w-[min(32rem,92vw)] border-s data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right rtl:data-[state=open]:slide-in-from-left rtl:data-[state=closed]:slide-out-to-left",
+    // left and right are that edge of the screen, in every language.
     left: "inset-y-0 left-0 h-full w-[min(20rem,85vw)] border-r data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
     right: "inset-y-0 right-0 h-full w-[min(32rem,92vw)] border-l data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
     bottom: "inset-x-0 bottom-0 max-h-[85dvh] rounded-t-xl border-t data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
@@ -93,7 +97,7 @@ export function SheetContent({
       >
         {children}
         {!hideClose && (
-          <D.Close className="absolute right-3 top-3 rounded-md p-1 text-fg-muted hover:bg-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus" aria-label="Close">
+          <D.Close className="absolute end-3 top-3 rounded-md p-1 text-fg-muted hover:bg-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus" aria-label="Close">
             <X className="size-4" />
           </D.Close>
         )}

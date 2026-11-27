@@ -1,6 +1,6 @@
 {
   "name": "@foldrun/ui",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "foldrun's one component set and design tokens: the React kit the dashboard and the operator console are drawn with, and the Astro components foldrun.io, foldrun.ir and docs.foldrun.io are built from. Source, not a build.",
   "type": "module",
   "license": "FSL-1.1-ALv2",
@@ -37,6 +37,7 @@
     "./react/copy-block": "./src/react/copy-block.tsx",
     "./react/date-time-field": "./src/react/date-time-field.tsx",
     "./react/dialog": "./src/react/dialog.tsx",
+    "./react/direction": "./src/react/direction.tsx",
     "./react/disclosure": "./src/react/disclosure.tsx",
     "./react/file-button": "./src/react/file-button.tsx",
     "./react/input": "./src/react/input.tsx",

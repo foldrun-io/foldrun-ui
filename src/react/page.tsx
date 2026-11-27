@@ -306,7 +306,7 @@ export function ResourceCard({
         {status && <StatusRing status={status} label={statusLabel ?? status} />}
       </div>
       {lines?.length ? (
-        <div className={cn("min-w-0 space-y-1 text-sm text-fg-muted", layout === "grid" ? "mt-4" : "mt-2 pl-12")}>
+        <div className={cn("min-w-0 space-y-1 text-sm text-fg-muted", layout === "grid" ? "mt-4" : "mt-2 ps-12")}>
           {lines.map((l, i) => (
             <div key={i} className="flex min-w-0 items-center gap-1.5 truncate [&_svg]:size-3.5 [&_svg]:shrink-0">
               {l}
@@ -356,7 +356,7 @@ export function UsageRows({ rows, heading, action }: { rows: UsageRow[]; heading
             <>
               <RingProgress value={r.limit ? r.used / r.limit : 0} label={r.shown} />
               <span className="min-w-0 truncate">{r.label}</span>
-              <span className="ml-auto shrink-0 text-[13px] tabular-nums text-fg-muted">{r.shown}</span>
+              <span className="ms-auto shrink-0 text-[13px] tabular-nums text-fg-muted">{r.shown}</span>
             </>
           );
           const cls = cn("flex min-h-8 items-center gap-2.5 rounded-md px-2 py-1 text-sm text-fg", i % 2 === 0 && "bg-sunken");

@@ -55,7 +55,7 @@ export function ConfirmDialog({ open, options, onResolve }: { open: boolean; opt
             (destructive ? cancelRef : confirmRef).current?.focus();
           }}
           onCloseAutoFocus={returnFocus}
-          className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl border border-line bg-surface text-left shadow-overlay outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
+          className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl border border-line bg-surface text-start shadow-overlay outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
         >
           <div className="p-5 sm:p-6">
             <A.Title className="text-lg font-semibold text-fg">{options.title}</A.Title>

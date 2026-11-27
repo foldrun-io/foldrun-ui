@@ -140,7 +140,7 @@ function SearchBox({
   }, [autoFocusKey]);
   return (
     <div className={cn("relative min-w-0", className)}>
-      <Search className={cn("pointer-events-none absolute top-1/2 -translate-y-1/2 text-fg-muted", size === "sm" ? "left-2.5 size-3.5" : "left-3 size-4")} aria-hidden />
+      <Search className={cn("pointer-events-none absolute top-1/2 -translate-y-1/2 text-fg-muted", size === "sm" ? "start-2.5 size-3.5" : "start-3 size-4")} aria-hidden />
       <input
         ref={box}
         id={id}
@@ -159,13 +159,13 @@ function SearchBox({
         aria-label={placeholder}
         className={cn(
           inputBase,
-          size === "sm" ? "h-8 pl-8 text-[13px]" : size === "md" ? "h-9 pl-9" : "h-10 pl-9",
-          "pr-10 [&::-webkit-search-cancel-button]:appearance-none",
-          note != null && "pr-24",
+          size === "sm" ? "h-8 ps-8 text-[13px]" : size === "md" ? "h-9 ps-9" : "h-10 ps-9",
+          "pe-10 [&::-webkit-search-cancel-button]:appearance-none",
+          note != null && "pe-24",
         )}
       />
       {note != null ? (
-        <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs tabular-nums text-fg-muted">{note}</span>
+        <span className="pointer-events-none absolute end-2.5 top-1/2 -translate-y-1/2 text-xs tabular-nums text-fg-muted">{note}</span>
       ) : value ? (
         <button
           type="button"
@@ -174,12 +174,12 @@ function SearchBox({
             onChange("");
             box.current?.focus();
           }}
-          className="absolute right-1.5 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-sm text-fg-muted hover:bg-muted hover:text-fg"
+          className="absolute end-1.5 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-sm text-fg-muted hover:bg-muted hover:text-fg"
         >
           <X className="size-4" />
         </button>
       ) : (
-        slashHint && <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm border border-line bg-sunken px-1.5 font-mono text-[10px] leading-4 text-fg-muted">/</kbd>
+        slashHint && <kbd className="pointer-events-none absolute end-2.5 top-1/2 -translate-y-1/2 rounded-sm border border-line bg-sunken px-1.5 font-mono text-[10px] leading-4 text-fg-muted">/</kbd>
       )}
     </div>
   );
@@ -278,9 +278,9 @@ export function RowTable({ columns, rows, nameHeader = "Name", empty }: { column
       <table className="w-full caption-bottom text-sm">
         <thead className="bg-sunken">
           <tr className="border-b border-line">
-            <th className="h-10 px-3 text-left align-middle text-[13px] font-medium whitespace-nowrap text-fg-muted">{nameHeader}</th>
+            <th className="h-10 px-3 text-start align-middle text-[13px] font-medium whitespace-nowrap text-fg-muted">{nameHeader}</th>
             {columns.map((c) => (
-              <th key={c.key} className={cn("h-10 px-3 align-middle text-[13px] font-medium whitespace-nowrap text-fg-muted", c.align === "end" ? "text-right" : "text-left", c.hide && HIDE[c.hide], c.className)}>
+              <th key={c.key} className={cn("h-10 px-3 align-middle text-[13px] font-medium whitespace-nowrap text-fg-muted", c.align === "end" ? "text-end" : "text-start", c.hide && HIDE[c.hide], c.className)}>
                 {c.header}
               </th>
             ))}
@@ -306,11 +306,11 @@ export function RowTable({ columns, rows, nameHeader = "Name", empty }: { column
                 </span>
               </td>
               {columns.map((c) => (
-                <td key={c.key} className={cn("h-16 max-w-56 px-3 py-2 align-middle whitespace-nowrap text-fg-secondary", c.align === "end" && "text-right tabular-nums", c.hide && HIDE[c.hide], c.className)}>
+                <td key={c.key} className={cn("h-16 max-w-56 px-3 py-2 align-middle whitespace-nowrap text-fg-secondary", c.align === "end" && "text-end tabular-nums", c.hide && HIDE[c.hide], c.className)}>
                   <span className="block truncate [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10 [&_input]:relative [&_input]:z-10">{r.cells?.[c.key] ?? <span className="text-fg-subtle">—</span>}</span>
                 </td>
               ))}
-              {hasAction && <td className="relative z-10 w-px px-3 py-2 text-right align-middle whitespace-nowrap">{r.action}</td>}
+              {hasAction && <td className="relative z-10 w-px px-3 py-2 text-end align-middle whitespace-nowrap">{r.action}</td>}
             </tr>
           ))}
         </tbody>
